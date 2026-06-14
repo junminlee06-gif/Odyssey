@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { PointerEvent, ReactNode } from 'react'
 
 const WORLD_WIDTH = 1881
@@ -38,6 +38,8 @@ function App() {
   const [mode, setMode] = useState<Mode>('play')
   const [equipped, setEquipped] = useState<NameId>('returningSoldier')
   const [dialogue, setDialogue] = useState({ title: '', body: '' })
+  const [walking, setWalking] = useState(false)
+  const walkTimer = useRef<number | null>(null)
   const near = useMemo(() => entities.find(e => Math.abs(e.x - x) < 90), [x])
   const camera = Math.min(Math.max(x - viewportWidth * 0.5, 0), Math.max(WORLD_WIDTH - viewportWidth, 0))
   const nameLabel = names.find(n => n[0] === equipped)?.[1]
@@ -50,14 +52,22 @@ function App() {
     return () => {
       window.removeEventListener('resize', updateViewport)
       window.removeEventListener('orientationchange', updateViewport)
+      if (walkTimer.current) window.clearTimeout(walkTimer.current)
     }
   }, [])
+
+  function moveTo(nextX: number) {
+    setWalking(true)
+    if (walkTimer.current) window.clearTimeout(walkTimer.current)
+    walkTimer.current = window.setTimeout(() => setWalking(false), 520)
+    setX(Math.max(80, Math.min(WORLD_WIDTH - 80, Math.round(nextX))))
+  }
 
   function tapMove(event: PointerEvent<HTMLElement>) {
     if ((event.target as HTMLElement).closest('button')) return
     const rect = event.currentTarget.getBoundingClientRect()
     const next = camera + ((event.clientX - rect.left) / rect.width) * viewportWidth
-    setX(Math.max(80, Math.min(WORLD_WIDTH - 80, Math.round(next))))
+    moveTo(next)
   }
 
   function openText(title: string, body: string) {
@@ -66,7 +76,7 @@ function App() {
   }
 
   function interact(entity: Entity) {
-    setX(entity.x)
+    moveTo(entity.x)
     if (entity.kind === 'object') openText(entity.title, objectLines[entity.id])
     if (entity.id === 'propagandist') {
       const line = equipped === 'sackerOfCities'
@@ -91,7 +101,7 @@ function App() {
       <div className="world" style={{ transform: `translateX(${-camera}px)` }}>
         <img className="sceneBackground" src="/art/bg_station_scroll.webp" alt="" />
         {entities.map(e => <button className={`marker ${e.kind} ${e.id}`} style={{ left: e.x }} key={e.id} onClick={() => interact(e)}>{e.title}</button>)}
-        <div className="player" style={{ left: x }} />
+        <div className={`player ${walking ? 'walking' : ''}`} style={{ left: x }} />
       </div>
     </section>
     <button className="ticketBtn" onClick={() => setMode('ticket')}>귀향표</button>
