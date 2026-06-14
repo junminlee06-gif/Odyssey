@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import type { PointerEvent, ReactNode } from 'react'
 
 type NameId = 'returningSoldier' | 'sonOfLaertes' | 'sackerOfCities' | 'manyMinded'
 type Mode = 'play' | 'names' | 'ticket' | 'dialogue' | 'inspection' | 'cutscene'
@@ -38,7 +39,7 @@ function App() {
   const camera = Math.min(Math.max(x - 520, 0), 1240)
   const nameLabel = names.find(n => n[0] === equipped)?.[1]
 
-  function tapMove(event: React.PointerEvent<HTMLElement>) {
+  function tapMove(event: PointerEvent<HTMLElement>) {
     if ((event.target as HTMLElement).closest('button')) return
     const rect = event.currentTarget.getBoundingClientRect()
     const next = camera + ((event.clientX - rect.left) / rect.width) * 1000
@@ -93,7 +94,7 @@ function App() {
   </main>
 }
 
-function Panel(props: { title: string; children: React.ReactNode; onClose: () => void }) {
+function Panel(props: { title: string; children: ReactNode; onClose: () => void }) {
   return <div className="overlay"><section className="panel"><button className="close" onClick={props.onClose}>닫기</button><h1>{props.title}</h1>{props.children}</section></div>
 }
 
