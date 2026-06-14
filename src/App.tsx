@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { PointerEvent, ReactNode } from 'react'
 
-const WORLD_WIDTH = 1536
+const WORLD_WIDTH = 1881
 
 type NameId = 'returningSoldier' | 'sonOfLaertes' | 'sackerOfCities' | 'manyMinded'
 type Mode = 'play' | 'names' | 'ticket' | 'dialogue' | 'inspection' | 'cutscene'
@@ -16,13 +16,13 @@ const names = [
 ] as const
 
 const entities: Entity[] = [
-  { id: 'poster', title: '영웅 포스터', x: 155, kind: 'object' },
-  { id: 'list', title: '귀환병 명단', x: 255, kind: 'object' },
-  { id: 'propagandist', title: '선전관', x: 460, kind: 'npc' },
-  { id: 'wreck', title: '불탄 열차 잔해', x: 615, kind: 'object' },
-  { id: 'survivor', title: '트로이 생존자', x: 840, kind: 'npc' },
-  { id: 'board', title: '이타카행 전광판', x: 970, kind: 'object' },
-  { id: 'inspector', title: '검표소', x: 1300, kind: 'gate' }
+  { id: 'poster', title: '영웅 포스터', x: 150, kind: 'object' },
+  { id: 'list', title: '귀환병 명단', x: 210, kind: 'object' },
+  { id: 'propagandist', title: '선전관', x: 520, kind: 'npc' },
+  { id: 'wreck', title: '불탄 열차 잔해', x: 760, kind: 'object' },
+  { id: 'survivor', title: '트로이 생존자', x: 1060, kind: 'npc' },
+  { id: 'board', title: '이타카행 전광판', x: 930, kind: 'object' },
+  { id: 'inspector', title: '검표소', x: 1660, kind: 'gate' }
 ]
 
 const objectLines: Record<string, string> = {
@@ -33,12 +33,12 @@ const objectLines: Record<string, string> = {
 }
 
 function App() {
-  const [x, setX] = useState(545)
+  const [x, setX] = useState(560)
   const [viewportWidth, setViewportWidth] = useState(1000)
   const [mode, setMode] = useState<Mode>('play')
   const [equipped, setEquipped] = useState<NameId>('returningSoldier')
   const [dialogue, setDialogue] = useState({ title: '', body: '' })
-  const near = useMemo(() => entities.find(e => Math.abs(e.x - x) < 80), [x])
+  const near = useMemo(() => entities.find(e => Math.abs(e.x - x) < 90), [x])
   const camera = Math.min(Math.max(x - viewportWidth * 0.5, 0), Math.max(WORLD_WIDTH - viewportWidth, 0))
   const nameLabel = names.find(n => n[0] === equipped)?.[1]
 
@@ -89,7 +89,7 @@ function App() {
     <header><b>OUTIS</b><span>트로이 폐허역</span><em>장착 이름: {nameLabel}</em></header>
     <section className="viewport" onPointerDown={tapMove}>
       <div className="world" style={{ transform: `translateX(${-camera}px)` }}>
-        <img className="sceneBackground" src="/art/bg_station.webp" alt="" />
+        <img className="sceneBackground" src="/art/bg_station_scroll.webp" alt="" />
         {entities.map(e => <button className={`marker ${e.kind} ${e.id}`} style={{ left: e.x }} key={e.id} onClick={() => interact(e)}>{e.title}</button>)}
         <div className="player" style={{ left: x }} />
       </div>
