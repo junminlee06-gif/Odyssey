@@ -1,5 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { PointerEvent, ReactNode } from 'react'
+
+const WORLD_WIDTH = 1536
 
 type NameId = 'returningSoldier' | 'sonOfLaertes' | 'sackerOfCities' | 'manyMinded'
 type Mode = 'play' | 'names' | 'ticket' | 'dialogue' | 'inspection' | 'cutscene'
@@ -14,13 +16,13 @@ const names = [
 ] as const
 
 const entities: Entity[] = [
-  { id: 'poster', title: '영웅 포스터', x: 260, kind: 'object' },
-  { id: 'list', title: '귀환병 명단', x: 430, kind: 'object' },
-  { id: 'propagandist', title: '선전관', x: 780, kind: 'npc' },
-  { id: 'wreck', title: '불탄 열차 잔해', x: 1040, kind: 'object' },
-  { id: 'survivor', title: '트로이 생존자', x: 1420, kind: 'npc' },
-  { id: 'board', title: '이타카행 전광판', x: 1640, kind: 'object' },
-  { id: 'inspector', title: '검표소', x: 2200, kind: 'gate' }
+  { id: 'poster', title: '영웅 포스터', x: 155, kind: 'object' },
+  { id: 'list', title: '귀환병 명단', x: 255, kind: 'object' },
+  { id: 'propagandist', title: '선전관', x: 460, kind: 'npc' },
+  { id: 'wreck', title: '불탄 열차 잔해', x: 615, kind: 'object' },
+  { id: 'survivor', title: '트로이 생존자', x: 840, kind: 'npc' },
+  { id: 'board', title: '이타카행 전광판', x: 970, kind: 'object' },
+  { id: 'inspector', title: '검표소', x: 1300, kind: 'gate' }
 ]
 
 const objectLines: Record<string, string> = {
@@ -31,19 +33,31 @@ const objectLines: Record<string, string> = {
 }
 
 function App() {
-  const [x, setX] = useState(920)
+  const [x, setX] = useState(545)
+  const [viewportWidth, setViewportWidth] = useState(1000)
   const [mode, setMode] = useState<Mode>('play')
   const [equipped, setEquipped] = useState<NameId>('returningSoldier')
   const [dialogue, setDialogue] = useState({ title: '', body: '' })
-  const near = useMemo(() => entities.find(e => Math.abs(e.x - x) < 105), [x])
-  const camera = Math.min(Math.max(x - 520, 0), 1240)
+  const near = useMemo(() => entities.find(e => Math.abs(e.x - x) < 80), [x])
+  const camera = Math.min(Math.max(x - viewportWidth * 0.5, 0), Math.max(WORLD_WIDTH - viewportWidth, 0))
   const nameLabel = names.find(n => n[0] === equipped)?.[1]
+
+  useEffect(() => {
+    const updateViewport = () => setViewportWidth(window.innerWidth)
+    updateViewport()
+    window.addEventListener('resize', updateViewport)
+    window.addEventListener('orientationchange', updateViewport)
+    return () => {
+      window.removeEventListener('resize', updateViewport)
+      window.removeEventListener('orientationchange', updateViewport)
+    }
+  }, [])
 
   function tapMove(event: PointerEvent<HTMLElement>) {
     if ((event.target as HTMLElement).closest('button')) return
     const rect = event.currentTarget.getBoundingClientRect()
-    const next = camera + ((event.clientX - rect.left) / rect.width) * 1000
-    setX(Math.max(100, Math.min(2220, Math.round(next))))
+    const next = camera + ((event.clientX - rect.left) / rect.width) * viewportWidth
+    setX(Math.max(80, Math.min(WORLD_WIDTH - 80, Math.round(next))))
   }
 
   function openText(title: string, body: string) {
