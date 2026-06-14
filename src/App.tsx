@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { PointerEvent, ReactNode } from 'react'
 
 const WORLD_WIDTH = 1881
+const KEYBOARD_SPEED = 160
+const TAP_WALK_DURATION = 1050
 
 type NameId = 'returningSoldier' | 'sonOfLaertes' | 'sackerOfCities' | 'manyMinded'
 type Mode = 'play' | 'names' | 'ticket' | 'dialogue' | 'inspection' | 'cutscene'
@@ -39,28 +41,75 @@ function App() {
   const [equipped, setEquipped] = useState<NameId>('returningSoldier')
   const [dialogue, setDialogue] = useState({ title: '', body: '' })
   const [walking, setWalking] = useState(false)
+  const [facing, setFacing] = useState<'right' | 'left'>('right')
   const walkTimer = useRef<number | null>(null)
+  const keys = useRef({ left: false, right: false })
+  const lastFrame = useRef<number | null>(null)
+  const frame = useRef<number | null>(null)
+  const modeRef = useRef<Mode>('play')
   const near = useMemo(() => entities.find(e => Math.abs(e.x - x) < 90), [x])
   const camera = Math.min(Math.max(x - viewportWidth * 0.5, 0), Math.max(WORLD_WIDTH - viewportWidth, 0))
   const nameLabel = names.find(n => n[0] === equipped)?.[1]
 
   useEffect(() => {
+    modeRef.current = mode
+  }, [mode])
+
+  useEffect(() => {
     const updateViewport = () => setViewportWidth(window.innerWidth)
+    const stopSoon = () => {
+      if (walkTimer.current) window.clearTimeout(walkTimer.current)
+      walkTimer.current = window.setTimeout(() => setWalking(false), 140)
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+      event.preventDefault()
+      if (event.key === 'ArrowLeft') keys.current.left = true
+      if (event.key === 'ArrowRight') keys.current.right = true
+    }
+    const onKeyUp = (event: KeyboardEvent) => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+      event.preventDefault()
+      if (event.key === 'ArrowLeft') keys.current.left = false
+      if (event.key === 'ArrowRight') keys.current.right = false
+      if (!keys.current.left && !keys.current.right) stopSoon()
+    }
+    const tick = (time: number) => {
+      if (lastFrame.current === null) lastFrame.current = time
+      const delta = Math.min((time - lastFrame.current) / 1000, 0.05)
+      lastFrame.current = time
+      const direction = Number(keys.current.right) - Number(keys.current.left)
+      if (direction !== 0 && modeRef.current === 'play') {
+        setFacing(direction > 0 ? 'right' : 'left')
+        setWalking(true)
+        setX(previous => Math.max(80, Math.min(WORLD_WIDTH - 80, previous + direction * KEYBOARD_SPEED * delta)))
+      }
+      frame.current = window.requestAnimationFrame(tick)
+    }
+
     updateViewport()
     window.addEventListener('resize', updateViewport)
     window.addEventListener('orientationchange', updateViewport)
+    window.addEventListener('keydown', onKeyDown)
+    window.addEventListener('keyup', onKeyUp)
+    frame.current = window.requestAnimationFrame(tick)
     return () => {
       window.removeEventListener('resize', updateViewport)
       window.removeEventListener('orientationchange', updateViewport)
+      window.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('keyup', onKeyUp)
       if (walkTimer.current) window.clearTimeout(walkTimer.current)
+      if (frame.current) window.cancelAnimationFrame(frame.current)
     }
   }, [])
 
   function moveTo(nextX: number) {
+    const clamped = Math.max(80, Math.min(WORLD_WIDTH - 80, Math.round(nextX)))
+    if (clamped !== x) setFacing(clamped > x ? 'right' : 'left')
     setWalking(true)
     if (walkTimer.current) window.clearTimeout(walkTimer.current)
-    walkTimer.current = window.setTimeout(() => setWalking(false), 520)
-    setX(Math.max(80, Math.min(WORLD_WIDTH - 80, Math.round(nextX))))
+    walkTimer.current = window.setTimeout(() => setWalking(false), TAP_WALK_DURATION)
+    setX(clamped)
   }
 
   function tapMove(event: PointerEvent<HTMLElement>) {
@@ -101,7 +150,7 @@ function App() {
       <div className="world" style={{ transform: `translateX(${-camera}px)` }}>
         <img className="sceneBackground" src="/art/bg_station_scroll.webp" alt="" />
         {entities.map(e => <button className={`marker ${e.kind} ${e.id}`} style={{ left: e.x }} key={e.id} onClick={() => interact(e)}>{e.title}</button>)}
-        <div className={`player ${walking ? 'walking' : ''}`} style={{ left: x }} />
+        <div className={`player ${walking ? 'walking' : 'idle'} ${facing === 'left' ? 'left' : ''}`} style={{ left: x }} />
       </div>
     </section>
     <button className="ticketBtn" onClick={() => setMode('ticket')}>귀향표</button>
