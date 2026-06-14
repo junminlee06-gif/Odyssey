@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import type { PointerEvent, ReactNode } from 'react'
-import { stationBg } from './stationBg'
 
 type NameId = 'returningSoldier' | 'sonOfLaertes' | 'sackerOfCities' | 'manyMinded'
 type Mode = 'play' | 'names' | 'ticket' | 'dialogue' | 'inspection' | 'cutscene'
@@ -76,7 +75,7 @@ function App() {
     <header><b>OUTIS</b><span>트로이 폐허역</span><em>장착 이름: {nameLabel}</em></header>
     <section className="viewport" onPointerDown={tapMove}>
       <div className="world" style={{ transform: `translateX(${-camera}px)` }}>
-        <img className="sceneBackground" src={stationBg} alt="" />
+        <img className="sceneBackground" src="/art/bg_station.webp" alt="" />
         {entities.map(e => <button className={`marker ${e.kind} ${e.id}`} style={{ left: e.x }} key={e.id} onClick={() => interact(e)}>{e.title}</button>)}
         <div className="player" style={{ left: x }} />
       </div>
