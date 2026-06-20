@@ -1,0 +1,85 @@
+name: Deploy Troy Ruined Station Prototype
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build static prototype
+        run: |
+          mkdir -p dist
+          cat > dist/index.html <<'HTML'
+          <!doctype html>
+          <html lang="ko">
+          <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+            <title>오디세이아: 트로이 폐허역</title>
+            <style>
+              *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07090b;color:#e4d4ad;font-family:Georgia,'Noto Serif KR',serif;user-select:none}button{font:inherit;min-height:42px;touch-action:manipulation}.game{position:relative;width:100vw;height:100dvh;background:#080b10;overflow:hidden}.sky{position:absolute;inset:0;background:linear-gradient(#101722,#101319 42%,#171717 43%,#080908 100%)}.parallax{position:absolute;inset:0;transform:translateX(calc(var(--cam)*-.18px));background:repeating-linear-gradient(90deg,transparent 0 210px,rgba(120,125,123,.16) 211px 216px),linear-gradient(180deg,transparent 0 24%,rgba(62,70,72,.25) 25% 31%,transparent 32%)}.world{position:absolute;left:0;top:0;height:100%;width:3600px;transform:translateX(calc(var(--cam)*-1px));transition:transform .05s linear}.ground{position:absolute;left:0;right:0;bottom:0;height:112px;background:linear-gradient(#25241f,#11110f);border-top:3px solid #5d5545}.rails{position:absolute;left:0;right:0;bottom:70px;height:14px;border-top:4px solid #746750;border-bottom:4px solid #746750}.glass{position:absolute;left:260px;top:48px;width:900px;height:130px;border-top:18px solid rgba(140,160,170,.25);transform:skewX(-12deg);box-shadow:0 30px 0 rgba(120,140,150,.08)}.train{position:absolute;right:80px;bottom:96px;width:760px;height:190px;background:#1c211f;border:4px solid #4f4635;box-shadow:inset 0 0 0 8px #111}.train:before{content:'ITHACA';position:absolute;left:34px;top:24px;color:#c7aa60;letter-spacing:.4em}.train:after{content:'';position:absolute;right:80px;bottom:165px;width:150px;height:70px;background:#121514;border:4px solid #4f4635}.wreck{position:absolute;left:1260px;bottom:102px;width:480px;height:115px;background:#241d18;border:3px solid #65442d;transform:skewX(-10deg)}.wreck:before{content:'목마열차';position:absolute;left:40px;top:32px;color:#8f7250}.poster{position:absolute;left:690px;bottom:116px;width:120px;height:170px;background:#c7b17d;color:#382617;border:3px solid #4e3b29;transform:rotate(-4deg);padding:18px 10px;font-weight:bold}.board{position:absolute;left:1960px;bottom:138px;width:270px;height:150px;background:#151d1e;border:3px solid #8b7648;color:#d8c487;padding:14px}.sign{position:absolute;right:620px;top:88px;width:390px;height:76px;background:#111718;border:3px solid #7d6c42;color:#d6c37e;text-align:center;padding:16px;font-size:24px;letter-spacing:.18em}.marker{position:absolute;bottom:116px;width:130px;min-height:60px;padding:8px;border:2px solid #9d8756;background:rgba(31,33,30,.92);color:#e0d1a5;box-shadow:5px 6px 0 rgba(0,0,0,.4);text-align:center}.npc{border-color:#8d4f3a}.player{position:absolute;bottom:98px;width:46px;height:92px;background:#272b2d;border:2px solid #b6a06c;box-shadow:10px 12px 0 rgba(0,0,0,.28);transform:translateX(-50%)}.player:before{content:'';position:absolute;left:12px;top:-19px;width:24px;height:22px;background:#3b3027;border:2px solid #b6a06c}.player:after{content:'';position:absolute;left:-13px;top:15px;width:74px;height:52px;border-left:10px solid #3c403f;border-right:10px solid #252827}.hud{position:absolute;z-index:5;left:16px;right:16px;top:12px;padding:10px 14px;background:rgba(17,18,16,.9);border:1px solid #9d8756;display:flex;gap:14px;align-items:center}.hud b{font-size:26px;color:#d7be73;letter-spacing:.14em}.hud span{margin-left:auto}.prompt{position:absolute;z-index:6;left:50%;bottom:126px;transform:translateX(-50%);padding:8px 14px;background:#d1bd8b;color:#1b1712;border:2px solid #564326;display:none}.controls{position:absolute;z-index:7;left:0;right:0;bottom:10px;display:flex;justify-content:space-between;padding:0 14px;pointer-events:none}.pad,.actions{display:flex;gap:10px;pointer-events:auto}.controls button,.uiBtn{background:#2a2119;color:#ead8ad;border:2px solid #987742;border-radius:10px;padding:10px 16px}.uiBtn{position:absolute;z-index:8;right:18px;bottom:86px}.ticketBtn{right:130px}.overlay{position:absolute;z-index:20;inset:0;background:rgba(3,3,3,.68);display:none;place-items:center;padding:20px}.panel{width:min(860px,94vw);max-height:84dvh;overflow:auto;background:#c9b47e;color:#251d14;border:3px solid #65502c;padding:24px;box-shadow:12px 14px 0 rgba(0,0,0,.45)}.panel h2{margin-top:0;border-bottom:2px solid rgba(70,52,25,.35);padding-bottom:8px}.choice,.close{display:block;width:100%;text-align:left;margin:8px 0;padding:12px;background:#211e18;color:#ead8ad;border:1px solid #826b3d}.close{text-align:center}.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}.locked{opacity:.45}.paper{background:#e0cea0;border:2px dashed #654b25;padding:18px;line-height:1.8}.stamp{display:inline-block;color:#8d211e;border:3px solid #8d211e;padding:4px 10px;transform:rotate(-8deg);font-weight:bold}.cut{position:absolute;z-index:30;inset:0;background:#030303;color:#dbc68a;display:none;place-items:center;text-align:center;padding:26px}.cut h1{font-size:clamp(38px,8vw,72px)}@media (max-width:900px){.hud b{font-size:18px}.cards{grid-template-columns:1fr}.controls button{padding:10px 14px}.uiBtn{bottom:74px}}
+            </style>
+          </head>
+          <body>
+          <div class="game" id="game" style="--cam:0">
+            <div class="sky"></div><div class="parallax"></div>
+            <div class="world" id="world">
+              <div class="glass"></div><div class="poster">트로이를<br/>함락한 자,<br/>귀환하다</div><div class="wreck"></div><div class="board">귀환병 명단<br/>OUTIS / 대조 필요<br/>라에르테스의 아들 / 부분 일치<br/>귀환병 / 승인</div><div class="sign">이타카행 연결편</div><div class="train"></div><div class="rails"></div><div class="ground"></div>
+              <div class="marker" data-id="poster" style="left:720px">영웅 포스터</div><div class="marker" data-id="wreck" style="left:1440px">불탄 열차 잔해</div><div class="marker" data-id="list" style="left:2090px">귀환병 명단</div><div class="marker" data-id="sign" style="left:2920px">이타카행 전광판</div>
+              <div class="marker npc" data-id="prop" style="left:2380px">선전관</div><div class="marker npc" data-id="survivor" style="left:2700px">트로이 생존자</div><div class="marker npc" data-id="inspector" style="left:3180px">검표관</div>
+              <div class="player" id="player"></div>
+            </div>
+            <div class="hud"><b>OUTIS</b><em id="nameNow">장착 이름: 귀환병</em><span>A/D 이동 · Space 점프 · E 상호작용 · I 신분철</span></div>
+            <div class="prompt" id="prompt">E 상호작용</div><button class="uiBtn ticketBtn" onclick="ticket()">귀향표</button><button class="uiBtn" onclick="names()">신분철</button>
+            <div class="controls"><div class="pad"><button data-hold="left">◀</button><button data-hold="right">▶</button></div><div class="actions"><button onclick="jump()">점프</button><button onclick="act()">상호작용</button><button onclick="names()">신분철</button></div></div>
+            <div class="overlay" id="overlay"><div class="panel" id="panel"></div></div><div class="cut" id="cut"></div>
+          </div>
+          <script>
+          const g=document.getElementById('game'),p=document.getElementById('player'),prompt=document.getElementById('prompt'),overlay=document.getElementById('overlay'),panel=document.getElementById('panel'),cut=document.getElementById('cut'),nameNow=document.getElementById('nameNow');
+          let x=160,y=0,vy=0,cam=0,keys={},equipped='soldier',inspected=false,near=null;
+          const namesData={soldier:['귀환병','공감, 낮은 위험. 병사와 민간인 대화에 적합.'],royal:['라에르테스의 아들','이타카 왕가 혈통명. 귀향 자격 대화에 적합.'],conqueror:['도시를 함락한 자','전공명. 군인과 선전관에게 강하지만 생존자에게 반감을 산다.'],cunning:['지략이 많은 자','분석적이고 우회적인 대화에 적합.'],outis:['OUTIS / 아무도 아님','폐쇄되지 않은 작전명. 사용 시 본명 안정도에 영향을 줄 수 있음.']};
+          const objs={poster:['영웅 포스터','“트로이를 함락한 자, 귀환하다.”','포스터 속 얼굴은 늘 나보다 먼저 고향에 도착한다.'],wreck:['불탄 열차 잔해','“목마열차 작전의 잔해.”','성문은 열리지 않았다. 그래서 우리는 열차를 들여보냈다.'],list:['귀환병 명단','“귀환병 명단에는 같은 사람처럼 보이는 이름이 여럿 적혀 있다.”','전쟁 중에 이름은 탄약보다 자주 갈아 끼웠다.'],sign:['이타카행 전광판','“이타카행 연결편 접수 중.”','집이라는 단어가 아직 선명하다.']};
+          const npc={prop:{line:'장군님, 수도행 개선 열차가 준비되었습니다. 대륙은 당신의 얼굴을 필요로 합니다.',opts:[['soldier','나는 집으로 간다.','영웅도 결국 귀환병이라는 말씀이군요.'],['conqueror','대륙은 이미 내 얼굴을 충분히 팔아먹었지.','그 말투까지 포스터에 담을 수 있다면 좋겠군요.'],['cunning','수도행이라. 나를 전시물로 만들 생각인가?','기록에는 그렇게 쓰지 않겠습니다.']]},survivor:{line:'당신이 그 열차를 들여보낸 사람이군요.',opts:[['soldier','전쟁은 끝났습니다.','당신들에게는 끝났겠죠.'],['conqueror','그 열차가 전쟁을 끝냈다.','그럼 우리도 당신을 그렇게 기억하겠습니다.'],['silent','……','말할 수 없다는 건 기억한다는 뜻이겠죠.']]},inspector:{line:'이타카행 연결편입니다. 탑승명과 귀향표를 제시하십시오.',opts:[['soldier','귀환병 신분으로 제시한다.','귀환병 신분. 전후 수송 대상자로 분류됩니다.'],['royal','라에르테스의 아들로 제시한다.','이타카 왕가 기록과 부분 일치합니다.'],['conqueror','도시를 함락한 자로 제시한다.','전공 기록 확인. 관련 재판 기록은 아직 폐쇄되지 않았습니다.'],['cunning','지략이 많은 자로 제시한다.','작전 관련 신분입니다. 대조가 필요합니다.']]}};
+          function setName(id){if(id&&id!=='silent'&&id!=='outis'){equipped=id;nameNow.textContent='장착 이름: '+namesData[id][0]}}
+          function modal(html){panel.innerHTML=html+'<button class="close" onclick="closeM()">닫기</button>';overlay.style.display='grid'}function closeM(){overlay.style.display='none'}
+          function names(){let h='<h2>신분철</h2><div class="cards">';for(const id of Object.keys(namesData)){h+=`<button class="choice ${id==='outis'?'locked':''}" ${id==='outis'?'disabled':''} onclick="setName('${id}');names()"><b>${namesData[id][0]}</b><small>${id==='outis'?'잠김 · ':id===equipped?'장착 중 · ':''}${namesData[id][1]}</small></button>`}modal(h+'</div>')}
+          function ticket(){modal('<h2>귀향표</h2><div class="paper">목적지: <b>이타카</b><br/>승객명: 번짐 / 부분 일치<br/>상태: 유효<br/>경고: OUTIS 작전명 미폐쇄<br/><br/><span class="stamp">VALID</span></div>')}
+          function interactObj(id){let o=objs[id];modal(`<h2>${o[0]}</h2><p>${o[1]}</p><p><b>오디세우스</b><br/>“${o[2]}”</p>`)}
+          function talk(id){let n=npc[id],h=`<h2>${id==='prop'?'선전관':id==='survivor'?'트로이 생존자':'검표관'}</h2><p>${n.line}</p>`;n.opts.forEach(o=>{let tag=o[0]==='silent'?'침묵':namesData[o[0]][0];h+=`<button class="choice" onclick="choose('${id}','${o[0]}')">[${tag}] ${o[1]}</button>`});modal(h)}
+          function choose(id,nm){setName(nm);let r=npc[id].opts.find(o=>o[0]===nm)[2];if(id==='inspector'){inspected=true;modal(`<h2>검표 결과 출력</h2><div class="paper">이타카행 연결편: 임시 승인<br/>승객명: 부분 일치<br/>출신: 이타카<br/>군적: 대조 필요<br/>작전명: OUTIS — 미폐쇄<br/>주의: 포세이돈국 관할선 진입 전 기록 정리 권고<br/><br/><span class="stamp">APPROVED</span></div><p>검표관: ${r}<br/>승인은 났습니다. 다만 OUTIS 작전명이 아직 닫히지 않았습니다.<br/><br/>주인공: 집에 도착할 때쯤엔 닫혀 있겠지.<br/><br/>검표관: 기록은 사람보다 오래 기다립니다.</p>`)}else modal(`<h2>응답</h2><p>${r}</p>`)}
+          function depart(){if(!inspected){modal('<h2>검표 필요</h2><p>이타카행 열차에 오르려면 먼저 검표관에게 귀향표와 탑승명을 제시해야 한다.</p>');return}closeM();cut.style.display='grid';let lines=['주인공이 열차 계단 앞에 선다.','검표관이 호루라기를 분다.','디젤 기관차가 천천히 움직인다.','비에 젖은 영웅 포스터가 찢어진다.','귀향표 클로즈업. 목적지 “이타카”는 아직 선명하다.'];let i=0;cut.innerHTML='<div><p>'+lines[0]+'</p></div>';let t=setInterval(()=>{i++;if(i<lines.length)cut.innerHTML='<div><p>'+lines[i]+'</p></div>';else{clearInterval(t);cut.innerHTML='<div><h1>1장. 트로이 폐허역</h1><p>전쟁은 끝났다. 그러나 그의 이름들은 아직 정리되지 않았다.</p></div>'}},1800)}
+          function act(){if(!near)return;if(objs[near])interactObj(near);else if(npc[near])talk(near);else if(near==='train')depart()}function jump(){if(y===0)vy=15}
+          addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key===' '){e.preventDefault();jump()}if(e.key.toLowerCase()==='e')act();if(e.key.toLowerCase()==='i'||e.key==='Tab'){e.preventDefault();names()}});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+          document.querySelectorAll('[data-hold]').forEach(b=>{let k=b.dataset.hold;b.onpointerdown=()=>keys[k]=true;b.onpointerup=b.onpointercancel=()=>keys[k]=false});
+          function loop(){let dir=(keys.d||keys.arrowright||keys.right?1:0)-(keys.a||keys.arrowleft||keys.left?1:0);x=Math.max(90,Math.min(3440,x+dir*5));if(y>0||vy>0){y+=vy;vy-=.8;if(y<0){y=0;vy=0}}cam=Math.max(0,Math.min(2500,x-innerWidth*.45));g.style.setProperty('--cam',cam);p.style.left=x+'px';p.style.bottom=(98+y)+'px';near=null;document.querySelectorAll('[data-id]').forEach(el=>{let d=Math.abs(parseInt(el.style.left)-x);if(d<90)near=el.dataset.id});if(x>3260)near='train';prompt.style.display=near?'block':'none';prompt.textContent=near==='train'?'E 열차 탑승':'E 상호작용';requestAnimationFrame(loop)}loop();
+          </script>
+          </body></html>
+          HTML
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
