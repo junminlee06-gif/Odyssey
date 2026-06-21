@@ -47,16 +47,27 @@ const assets = {
   train: loadImage('./assets/backgrounds/train_long.svg'),
   platform: loadImage('./assets/tiles/platform.svg'),
   heroIdle: loadImage('./assets/characters/odysseus_idle.svg'),
+  heroIdleB: loadImage('./assets/characters/odysseus_idle_b.svg'),
   heroWalkA: loadImage('./assets/characters/odysseus_walk_a.svg'),
   heroWalkB: loadImage('./assets/characters/odysseus_walk_b.svg'),
+  heroWalkC: loadImage('./assets/characters/odysseus_walk_c.svg'),
+  heroWalkD: loadImage('./assets/characters/odysseus_walk_d.svg'),
+  heroJump: loadImage('./assets/characters/odysseus_jump.svg'),
+  heroFall: loadImage('./assets/characters/odysseus_fall.svg'),
   prop: loadImage('./assets/characters/npc_propagandist.svg'),
+  propB: loadImage('./assets/characters/npc_propagandist_idle_b.svg'),
   survivor: loadImage('./assets/characters/npc_survivor.svg'),
+  survivorB: loadImage('./assets/characters/npc_survivor_idle_b.svg'),
   inspector: loadImage('./assets/characters/npc_inspector.svg'),
+  inspectorB: loadImage('./assets/characters/npc_inspector_idle_b.svg'),
   poster: loadImage('./assets/objects/poster.svg'),
   listBoard: loadImage('./assets/objects/list_board.svg'),
   cargo: loadImage('./assets/objects/cargo_mark.svg'),
   checkpoint: loadImage('./assets/objects/checkpoint.svg')
 };
+
+const heroIdleFrames = [assets.heroIdle, assets.heroIdleB];
+const heroWalkFrames = [assets.heroWalkA, assets.heroWalkC, assets.heroWalkB, assets.heroWalkD];
 
 const C = {
   black: '#050403',
@@ -71,6 +82,8 @@ const C = {
   bronze0: '#302114',
   bronze1: '#5a3d21',
   bronze2: '#8d642f',
+  steamA: 'rgba(210,198,168,.32)',
+  steamB: 'rgba(240,220,180,.18)',
   shadow: 'rgba(0,0,0,.58)'
 };
 
@@ -148,6 +161,33 @@ function drawBackground() {
   rect(0, 0, VIEW_W, VIEW_H, 'rgba(0,0,0,.08)');
 }
 
+function drawSteamPuff(x, y, size, color) {
+  rect(x, y + size * 0.35, size, size * 0.45, color);
+  rect(x + size * 0.2, y, size * 0.62, size * 0.7, color);
+  rect(x + size * 0.55, y + size * 0.22, size * 0.55, size * 0.5, color);
+}
+function drawTrainSteam() {
+  const period = 4300;
+  const active = 1650;
+  const local = currentTime % period;
+  if (local > active) return;
+  const baseT = local / active;
+  const offset = -Math.floor(cameraX * 0.62) % 936;
+  for (let base = offset - 936; base < VIEW_W + 936; base += 936) {
+    const vents = [base + 82, base + 402, base + 706];
+    vents.forEach((ventX, ventIndex) => {
+      for (let i = 0; i < 5; i++) {
+        const t = Math.max(0, baseT - i * 0.12 - ventIndex * 0.04);
+        if (t <= 0 || t > 1) continue;
+        const drift = t * (36 + i * 7);
+        const rise = t * (64 + i * 10);
+        const size = 8 + t * 18 + i * 2;
+        const color = i % 2 ? C.steamA : C.steamB;
+        drawSteamPuff(ventX - drift + i * 7, 270 - rise - i * 4, size, color);
+      }
+    });
+  }
+}
 function drawTrain() {
   const y = 258;
   const offset = -Math.floor(cameraX * 0.62) % 936;
@@ -156,6 +196,7 @@ function drawTrain() {
     rect(0, y + 18, VIEW_W, 2, C.gold0);
     rect(0, y + 78, VIEW_W, 2, C.gold0);
   }
+  drawTrainSteam();
 }
 
 function drawPlatform() {
@@ -220,18 +261,27 @@ function drawForegroundObjects() {
 function drawNpc(entity) {
   const x = screenX(entity.x);
   if (x < -160 || x > VIEW_W + 160) return;
-  const y = GROUND_Y - 58;
-  let image = assets.prop;
+  const frame = Math.floor((currentTime + entity.x) / 720) % 2;
+  const bob = frame ? 1 : 0;
+  const y = GROUND_Y - 58 - bob;
+  let image = frame ? assets.propB : assets.prop;
   let w = 42;
   let h = 58;
-  if (entity.id === 'survivor') image = assets.survivor;
-  if (entity.id === 'inspector') image = assets.inspector;
+  if (entity.id === 'survivor') image = frame ? assets.survivorB : assets.survivor;
+  if (entity.id === 'inspector') image = frame ? assets.inspectorB : assets.inspector;
   rect(x - 20, GROUND_Y - 3, 44, 5, 'rgba(0,0,0,.55)');
   drawImage(image, x - 21, y, w, h);
 }
 function drawHero() {
   const moving = input.left || input.right;
-  const image = moving ? (Math.floor(currentTime / 110) % 2 ? assets.heroWalkA : assets.heroWalkB) : assets.heroIdle;
+  let image;
+  if (playerY > 2) {
+    image = velocityY > 0 ? assets.heroJump : assets.heroFall;
+  } else if (moving) {
+    image = heroWalkFrames[Math.floor(currentTime / 92) % heroWalkFrames.length];
+  } else {
+    image = heroIdleFrames[Math.floor(currentTime / 580) % heroIdleFrames.length];
+  }
   const w = 40;
   const h = 56;
   const x = screenX(playerX) - 20;
