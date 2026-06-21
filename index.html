@@ -20,26 +20,6 @@
     <section id="modal"><article id="panel"></article></section>
     <section id="cut"></section>
   </main>
-  <script>
-    (() => {
-      const NativeImage = window.Image;
-      window.Image = function(width, height) {
-        const image = width === undefined ? new NativeImage() : new NativeImage(width, height);
-        const descriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
-        Object.defineProperty(image, 'src', {
-          configurable: true,
-          enumerable: true,
-          get() { return descriptor.get.call(image); },
-          set(value) {
-            const next = String(value).replace('./assets/backgrounds/station_far.svg', './assets/backgrounds/station_far.png');
-            descriptor.set.call(image, next);
-          }
-        });
-        return image;
-      };
-      window.Image.prototype = NativeImage.prototype;
-    })();
-  </script>
   <script src="./game.js"></script>
   <script src="./sprite-cropper.js"></script>
 </body>
