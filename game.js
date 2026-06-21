@@ -14,6 +14,7 @@ const MOVE_SPEED = 176;
 const JUMP_SPEED = 400;
 const GRAVITY = 1120;
 const HERO_SCALE = 2;
+const NPC_SCALE = 2;
 
 let playerX = 96;
 let playerY = 0;
@@ -103,12 +104,33 @@ function drawSky() {
     for (let wy=94; wy<145; wy+=12) { rect(x+10,wy,8,4,'#2f5155'); rect(x+31,wy+2,9,3,'#284347'); rect(x+51,wy,5,4,'#335a51'); }
   }
 }
+
 function drawBackgroundTrain() {
-  const x=screenX(1050,.42), y=91; rect(x-18,y+25,365,60,C.shadow); noise(x,y+30,345,49,'#182321','#283933',8); rect(x+5,y+35,332,5,'#3b4e48'); rect(x+12,y+48,275,3,C.cyanDark);
-  for(let car=0;car<4;car++){ const cx=x+18+car*78; rect(cx,y+18,68,25,C.black); rect(cx+6,y+23,15,9,C.glass); rect(cx+27,y+23,15,9,C.glass); rect(cx+48,y+23,11,9,'#263c3e'); text(car===0?'ITHACA':'',cx+10,y+56,C.cyanDark,6); }
-  for(let i=0;i<10;i++){ rect(x+22+i*30,y+76,15,15,C.black); rect(x+26+i*30,y+80,7,7,C.brassDark); }
-  const smoke=Math.floor(currentTime/180)%6; for(let i=0;i<5;i++) rect(x+86+i*10-smoke*2,y+7-i*6,12+i*2,3,C.smoke);
+  const y = 90;
+  const offset = Math.floor(cameraX * 0.36) % 96;
+  const start = -offset - 110;
+  rect(0, y + 22, VIEW_W, 65, 'rgba(0,0,0,.50)');
+  for (let x = start; x < VIEW_W + 140; x += 96) {
+    rect(x - 3, y + 24, 100, 53, C.black);
+    noise(x, y + 27, 94, 47, '#182321', '#283933', 8);
+    rect(x + 2, y + 31, 88, 5, '#3b4e48');
+    rect(x + 6, y + 45, 72, 3, C.cyanDark);
+    rect(x + 10, y + 14, 60, 23, C.black);
+    rect(x + 15, y + 19, 13, 8, C.glass);
+    rect(x + 34, y + 19, 13, 8, C.glass);
+    rect(x + 53, y + 19, 10, 8, '#263c3e');
+    for (let i = 0; i < 4; i++) {
+      rect(x + 14 + i * 21, y + 72, 14, 14, C.black);
+      rect(x + 18 + i * 21, y + 76, 6, 6, C.brassDark);
+    }
+  }
+  text('ITHACA LINE', 18 - offset, y + 55, C.cyanDark, 6);
+  text('ITHACA LINE', 210 - offset, y + 55, C.cyanDark, 6);
+  const smoke = Math.floor(currentTime / 180) % 6;
+  for (let i = 0; i < 5; i++) rect(78 + i * 10 - smoke * 2, y + 7 - i * 6, 12 + i * 2, 3, C.smoke);
+  for (let i = 0; i < 5; i++) rect(282 + i * 10 - smoke * 2, y + 8 - i * 6, 12 + i * 2, 3, C.smoke);
 }
+
 function drawStationRoof() {
   const shift=Math.floor(cameraX*.3); for(let x=-90-shift%80;x<VIEW_W+100;x+=80){ line(x,34,x+70,118,'#3c666a'); line(x+70,34,x,118,'#14272b'); rect(x+20,40,34,4,'#5d7775'); rect(x+31,52,8,5,'#1c363a'); }
   rect(0,107,VIEW_W,8,'#1b292b'); rect(0,113,VIEW_W,2,'#617267');
@@ -127,11 +149,11 @@ function drawListBoard(x,y){ rect(x-3,y-3,78,70,C.black); noise(x,y,72,64,'#0f1d
 function drawWreck(x,y){ rect(x+2,y+28,116,32,C.black); noise(x+5,y+24,106,36,C.rustDark,C.rust,5); rect(x+14,y+17,55,11,'#241712'); rect(x+65,y+2,14,25,C.black); rect(x+80,y+9,31,9,C.rustDark); rect(x+15,y+50,17,17,C.black); rect(x+76,y+50,17,17,C.black); for(let i=0;i<7;i++) rect(x+12+i*13,y+32+(i%2)*5,8,2,C.rust); rect(x+53,y,8,10,C.smoke); rect(x+58,y-7,12,4,'#61727a'); }
 function drawDebris(x,y){ rect(x,y+14,46,6,C.black); rect(x+4,y+10,15,5,C.rustDark); rect(x+20,y+7,20,4,C.steelDark); rect(x+36,y+4,4,12,C.brassDark); rect(x+9,y+6,8,2,C.cyanDark); }
 function drawGate(x,y){ rect(x-40,y+24,85,42,C.black); noise(x-36,y+28,77,34,'#101819','#1f3434',5); rect(x-32,y+34,68,3,C.cyan); text('PLATFORM 17',x-24,y+48,C.cyan,6); rect(x-25,y+55,50,2,C.red); rect(x-43,y+15,9,51,C.black); rect(x+38,y+15,9,51,C.black); }
-function drawNpc(x,y,type){ const palette={...heroPalette}; palette.c=type===0?'#29493e':type===1?'#2a302c':'#101819'; palette.h=type===0?'#69a08f':type===1?'#59483b':'#2d6665'; palette.b=type===2?C.cyan:C.brass; sprite(npcSprite,palette,x-11,y+8,2,false); if(type===0) rect(x+11,y+19,8,16,C.paper); if(type===1) rect(x+9,y+38,12,8,'#6b4d31'); if(type===2) rect(x+9,y+26,18,4,C.cyan); }
+function drawNpc(x,y,type){ const palette={...heroPalette}; palette.c=type===0?'#29493e':type===1?'#2a302c':'#101819'; palette.h=type===0?'#69a08f':type===1?'#59483b':'#2d6665'; palette.b=type===2?C.cyan:C.brass; sprite(npcSprite,palette,x-11,y,NPC_SCALE,false); if(type===0) rect(x+11,y+11,8,16,C.paper); if(type===1) rect(x+9,y+30,12,8,'#6b4d31'); if(type===2) rect(x+9,y+18,18,4,C.cyan); }
 function drawGlyph(x,y,active){ rect(x-(active?18:11),y-1,active?36:22,active?17:12,C.black); rect(x-(active?17:10),y,active?34:20,active?15:10,active?C.cyan:'#3a3528'); rect(x-(active?15:8),y+2,active?30:16,active?11:6,active?'#051615':'#111514'); text(active?'E':'...',x-(active?3:5),y+(active?11:8),active?C.cyan:'#9a8c65',active?8:5); }
-function drawHero(){ const moving=input.left||input.right; const frame=moving?(Math.floor(currentTime/110)%2?heroRunA:heroRunB):heroIdle; const hx=screenX(playerX)-16; const hy=GROUND_Y-44-Math.round(playerY); rect(hx-3,hy-3,38,48,'rgba(120,255,243,.10)'); sprite(frame,heroPalette,hx,hy,HERO_SCALE,facing<0); rect(hx+(facing<0?3:27),hy+25,6,2,C.red); }
+function drawHero(){ const moving=input.left||input.right; const frame=moving?(Math.floor(currentTime/110)%2?heroRunA:heroRunB):heroIdle; const heroHeight=frame.length*HERO_SCALE; const hx=screenX(playerX)-16; const hy=GROUND_Y-heroHeight-Math.round(playerY); rect(hx-4,GROUND_Y-3,36,4,'rgba(0,0,0,.65)'); rect(hx-3,hy-3,38,heroHeight+6,'rgba(120,255,243,.10)'); sprite(frame,heroPalette,hx,hy,HERO_SCALE,facing<0); rect(hx+(facing<0?3:27),hy+25,6,2,C.red); }
 function drawRainAndScanlines(){ const phase=Math.floor(currentTime/45); for(let i=0;i<54;i++){ const x=(i*37+phase*3)%VIEW_W; const y=(i*19+phase*7)%VIEW_H; rect(x,y,1,5,'rgba(120,255,243,.20)'); } for(let y=0;y<VIEW_H;y+=2) rect(0,y,VIEW_W,1,'rgba(0,0,0,.08)'); }
-function drawScene(){ cameraX=Math.max(0,Math.min(WORLD_W-VIEW_W,playerX-170)); drawSky(); drawBackgroundTrain(); drawStationRoof(); drawCables(); drawPlatform(); const visible=x=>screenX(x)>-150&&screenX(x)<VIEW_W+120; if(visible(160))drawPoster(screenX(140),105); if(visible(360))drawListBoard(screenX(335),94); if(visible(770))drawDebris(screenX(745),145); if(visible(910))drawWreck(screenX(845),114); if(visible(1320))drawDebris(screenX(1290),145); if(visible(1480)){drawListBoard(screenX(1420),92); text('ITHACA',screenX(1517),67,C.cyan,8);} if(visible(2010))drawGate(screenX(2010),109); entities.forEach(e=>{ const x=screenX(e.x); if(x<-80||x>VIEW_W+80)return; if(e.kind==='npc'){ const type=e.id==='survivor'?1:e.id==='inspector'?2:0; drawNpc(x,GROUND_Y-54,type); } drawGlyph(x,GROUND_Y-76,near&&near.id===e.id); }); drawHero(); drawRainAndScanlines(); }
+function drawScene(){ cameraX=Math.max(0,Math.min(WORLD_W-VIEW_W,playerX-170)); drawSky(); drawBackgroundTrain(); drawStationRoof(); drawCables(); drawPlatform(); const visible=x=>screenX(x)>-150&&screenX(x)<VIEW_W+120; if(visible(160))drawPoster(screenX(140),105); if(visible(360))drawListBoard(screenX(335),94); if(visible(770))drawDebris(screenX(745),145); if(visible(910))drawWreck(screenX(845),114); if(visible(1320))drawDebris(screenX(1290),145); if(visible(1480)){drawListBoard(screenX(1420),92); text('ITHACA',screenX(1517),67,C.cyan,8);} if(visible(2010))drawGate(screenX(2010),109); entities.forEach(e=>{ const x=screenX(e.x); if(x<-80||x>VIEW_W+80)return; if(e.kind==='npc'){ const type=e.id==='survivor'?1:e.id==='inspector'?2:0; drawNpc(x,GROUND_Y-npcSprite.length*NPC_SCALE,type); } }); drawHero(); entities.forEach(e=>{ const x=screenX(e.x); if(x<-80||x>VIEW_W+80)return; drawGlyph(x,GROUND_Y-76,near&&near.id===e.id); }); drawRainAndScanlines(); }
 function update(now){ const dt=Math.min((now-previousTime)/1000,.033); previousTime=now; currentTime=now; const dir=Number(input.right)-Number(input.left); if(dir!==0)facing=dir; playerX=Math.max(48,Math.min(WORLD_W-70,playerX+dir*MOVE_SPEED*dt)); if(input.jumpQueued&&playerY===0) velocityY=JUMP_SPEED; input.jumpQueued=false; if(playerY>0||velocityY!==0){ playerY+=velocityY*dt; velocityY-=GRAVITY*dt; if(playerY<0){playerY=0; velocityY=0;} } near=entities.find(e=>Math.abs(e.x-playerX)<58)||null; hint.textContent=near?'E / 터치: '+near.title:'A/D 이동 · Space 점프 · E 상호작용 · I 신분철'; drawScene(); requestAnimationFrame(update); }
 function show(title,body,extra=''){ panel.innerHTML='<h1>'+title+'</h1><p>'+body+'</p>'+extra+'<button onclick="hide()">닫기</button>'; modal.style.display='grid'; }
 function hide(){ modal.style.display='none'; }
