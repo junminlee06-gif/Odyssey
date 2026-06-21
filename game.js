@@ -8,8 +8,8 @@ const nameNow = document.getElementById('nameNow');
 
 const VIEW_W = 768;
 const VIEW_H = 432;
-const GROUND_Y = 354;
-const WORLD_W = 4760;
+const GROUND_Y = 356;
+const WORLD_W = 4800;
 const MOVE_SPEED = 350;
 const JUMP_SPEED = 790;
 const GRAVITY = 2240;
@@ -30,15 +30,38 @@ let currentTime = 0;
 let equippedName = '귀환병';
 let inspected = false;
 let near = null;
-
 const input = { left: false, right: false, jumpQueued: false };
 
 const C = {
-  black: '#050403', void: '#0a0704', skyTop: '#241a10', skyMid: '#15100b', skyBottom: '#090604',
-  dustA: '#382817', dustB: '#4b351d', railDark: '#1a120a', bronze0: '#302114', bronze1: '#5a3d21',
-  bronze2: '#8d642f', gold0: '#9d7a3a', gold1: '#d7b35d', gold2: '#f0d281', paper: '#d1b875',
-  paperLight: '#ead591', red: '#9f3426', redHi: '#dd5b3c', skin: '#a97b53', coat0: '#12100d',
-  coat1: '#27231d', coat2: '#6b5a35', smoke: '#584638', shadow: 'rgba(0,0,0,.58)'
+  black: '#050403',
+  void: '#101013',
+  skyTop: '#2c3236',
+  skyMid: '#1c1e20',
+  skyBottom: '#11100e',
+  stationDark: '#181615',
+  stationMid: '#2c2924',
+  stationLight: '#524b3f',
+  glass: '#5c6b6c',
+  glassDark: '#303b3d',
+  railDark: '#1a120a',
+  bronze0: '#302114',
+  bronze1: '#5a3d21',
+  bronze2: '#8d642f',
+  gold0: '#9d7a3a',
+  gold1: '#d7b35d',
+  gold2: '#f0d281',
+  paper: '#d1b875',
+  paperLight: '#ead591',
+  red: '#9f3426',
+  redHi: '#dd5b3c',
+  skin: '#a97b53',
+  coat0: '#12100d',
+  coat1: '#2a241d',
+  coat2: '#6b5a35',
+  survivor: '#4c3929',
+  officer: '#5d4a2b',
+  smoke: '#635c53',
+  shadow: 'rgba(0,0,0,.58)'
 };
 
 const entities = [
@@ -67,79 +90,145 @@ function noise(x, y, w, h, base, dot, step = 10) { rect(x, y, w, h, base); for (
 function sprite(matrix, palette, x, y, scale, flip) { matrix.forEach((row, yy) => [...row].forEach((ch, xx) => { if (ch==='.' || !palette[ch]) return; const dx = flip ? row.length-1-xx : xx; rect(x + dx*scale, y + yy*scale, scale, scale, palette[ch]); })); }
 
 const heroIdle = [
-  '.....kkkk.....',
-  '....kkkkkk....',
-  '....kksssk....',
-  '.....kss......',
-  '.....sss......',
-  '...ooooooo....',
-  '..occcccco....',
-  '.occhhhcco....',
-  '.occhhhcco....',
-  '.occcbbcco....',
-  '..occbbco.....',
-  '..occccc......',
-  '..cc..cc......',
-  '..ll..ll......',
-  '.bbb..bbb.....'
+  '......kkkk......',
+  '.....kkkkkk.....',
+  '.....kksssk.....',
+  '......kss.......',
+  '......sss.......',
+  '....oooooooo....',
+  '...occccccob....',
+  '..occhhhccob....',
+  '..occhhhhcco....',
+  '..occcbbccco....',
+  '..occcbbccco....',
+  '...occbbcco.....',
+  '...occcccco.....',
+  '....occccc......',
+  '....cc..cc......',
+  '....cc..cc......',
+  '....ll..ll......',
+  '...lll..lll.....',
+  '...bb....bb.....'
 ];
-const heroRunA = ['.....kkkk.....','....kkkkkk....','....kksssk....','.....kss......','.....sss......','...ooooooo....','..occcccco....','.occhhhcco....','.occhhhcco....','.occcbbcco....','..occbbco.....','.occccc.......','.ccc..cc......','.ll...lll.....','bbb....bb.....'];
-const heroRunB = ['.....kkkk.....','....kkkkkk....','....kksssk....','.....kss......','.....sss......','...ooooooo....','..occcccco....','.occhhhcco....','.occhhhcco....','.occcbbcco....','..occbbco.....','...occccc.....','..cc..ccc.....','.lll...ll.....','.bb....bbb....'];
-const npcSprite = ['...kkkk...','..kkkkkk..','..kksssk..','...kssk...','..ooooo...','.occccoco.','.occhhcco.','.occcbbco.','..occbbco.','..occcco..','..cc..cc..','.lll..lll.','.bb....bb.'];
+const heroRunA = ['......kkkk......','.....kkkkkk.....','.....kksssk.....','......kss.......','......sss.......','....oooooooo....','...occccccob....','..occhhhccob....','..occhhhhcco....','..occcbbccco....','..occcbbccco....','...occbbcco.....','..occcccco......','..occccc........','..ccc...cc......','..cc....ccc.....','.lll.....ll.....','lll......lll....','bb........bbb...'];
+const heroRunB = ['......kkkk......','.....kkkkkk.....','.....kksssk.....','......kss.......','......sss.......','....oooooooo....','...occccccob....','..occhhhccob....','..occhhhhcco....','..occcbbccco....','..occcbbccco....','...occbbcco.....','....occcccco....','.....occccc.....','....cc...ccc....','...ccc....cc....','...ll.....lll...','..lll......lll..','.bbb........bb..'];
+
+const officerSprite = [
+  '....kkkkk....',
+  '...kkkkkkk...',
+  '...kkssskk...',
+  '....ksssk....',
+  '...ooooooo...',
+  '..ohhhhhho..',
+  '.ohhbbbbhho.',
+  '.ohhcccccho.',
+  '.ohhcccccho.',
+  '..ohccccco..',
+  '...occoco...',
+  '...cc..cc...',
+  '..lll..lll..',
+  '..bb....bb..'
+];
+const survivorSprite = [
+  '....kkkk.....',
+  '...kkkkkk....',
+  '...kssssk....',
+  '....sss......',
+  '..ooooooo....',
+  '.orrccccro...',
+  '.orrrccrro...',
+  '..orrrrrro...',
+  '..orrbbro....',
+  '...orrrro....',
+  '...rr..rr....',
+  '..lll..ll....',
+  '..bb....bb...'
+];
+const inspectorSprite = [
+  '...kkkkkk...',
+  '..kkkkkkkk..',
+  '..kkssskkk..',
+  '...ksssk....',
+  '..oooooooo..',
+  '.oohhhhhhoo.',
+  '.ohhgggghho.',
+  '.ohhcccccho.',
+  '.ohhcccccho.',
+  '..ohhbbhho..',
+  '...occoco...',
+  '..ccc..ccc..',
+  '..lll..lll..',
+  '.bbb....bbb.'
+];
 const heroPalette = { k:C.black, s:C.skin, o:C.black, c:C.coat0, h:C.coat2, b:C.gold1, l:C.black };
 
 function drawSky() {
   const gradient = ctx.createLinearGradient(0,0,0,VIEW_H);
   gradient.addColorStop(0,C.skyTop);
-  gradient.addColorStop(.55,C.skyMid);
+  gradient.addColorStop(.48,C.skyMid);
   gradient.addColorStop(1,C.skyBottom);
   ctx.fillStyle = gradient;
   ctx.fillRect(0,0,VIEW_W,VIEW_H);
-  for (let i=0;i<44;i++) {
-    const x=(i*102-Math.floor(cameraX*.04))%(VIEW_W+140)-70;
-    const y=26+(i*43)%138;
-    rect(x,y,38+(i%5)*18,2,i%2?C.dustA:C.dustB);
+  for (let i=0;i<54;i++) {
+    const x=(i*87-Math.floor(cameraX*.035))%(VIEW_W+140)-70;
+    const y=24+(i*41)%148;
+    rect(x,y,42+(i%5)*18,2,i%2?'#3b342b':'#4b4031');
   }
-  const roofY = 236;
-  let x = -40 - Math.floor(cameraX*.12)%180;
-  while (x < VIEW_W + 80) {
-    line(x, roofY, x+88, roofY+4, C.gold0);
-    line(x+88, roofY+4, x+144, roofY+2, C.bronze2);
-    if ((x/180|0)%2===0) { line(x+144, roofY+2, x+148, roofY+16, C.gold1); line(x+148, roofY+16, x+152, roofY+4, C.black); }
-    x += 180;
-  }
-  for (let i=0;i<9;i++) rect((i*154-Math.floor(cameraX*.08))%(VIEW_W+60)-30, roofY+24+(i%3)*14, 2, 18, C.bronze2);
 }
 
-function drawLongIthacaTrain() {
+function drawStationArchitecture() {
+  const p = cameraX * 0.16;
+  const roofY = 128;
+  rect(0, 214, VIEW_W, 8, C.stationDark);
+  rect(0, 222, VIEW_W, 3, C.gold0);
+  for (let x = -220 - Math.floor(p)%220; x < VIEW_W + 240; x += 220) {
+    // tall station arch
+    line(x, roofY + 104, x + 92, roofY, C.stationLight);
+    line(x + 92, roofY, x + 184, roofY + 104, C.stationLight);
+    line(x + 15, roofY + 104, x + 96, roofY + 18, C.stationMid);
+    line(x + 96, roofY + 18, x + 172, roofY + 104, C.stationMid);
+    rect(x + 76, roofY + 7, 36, 6, C.glass);
+    rect(x + 38, roofY + 74, 52, 4, C.glassDark);
+    rect(x + 116, roofY + 76, 46, 4, C.glassDark);
+  }
+  for (let x = -50 - Math.floor(cameraX*.38)%120; x < VIEW_W + 70; x += 120) {
+    rect(x, 206, 9, 150, C.black);
+    rect(x + 3, 206, 2, 150, C.stationLight);
+    rect(x - 12, 232, 34, 5, C.stationMid);
+    rect(x + 16, 250, 10, 4, C.gold0);
+  }
+  // visible station signs / boards without overusing text on train
+  const signX = screenX(126, .22);
+  rect(signX, 184, 168, 28, C.black);
+  rect(signX+5, 189, 158, 18, '#21170e');
+  text('TROY CENTRAL', signX+28, 203, C.gold1, 11);
+  rect(screenX(560,.28), 238, 96, 40, C.black);
+  noise(screenX(564,.28), 242, 88, 32, '#21170e', '#53391d', 8);
+  rect(screenX(575,.28), 253, 68, 4, C.gold0);
+  rect(screenX(586,.28), 265, 48, 3, C.bronze2);
+}
+
+function drawLongTrain() {
   const trainY = 270;
   const trainH = 84;
-  rect(0, trainY-10, VIEW_W, trainH+25, 'rgba(0,0,0,.45)');
+  rect(0, trainY-10, VIEW_W, trainH+25, 'rgba(0,0,0,.38)');
   rect(0, trainY-4, VIEW_W, 4, C.black);
   rect(0, trainY, VIEW_W, 5, C.gold0);
   rect(0, trainY+trainH, VIEW_W, 5, C.black);
   const offset = Math.floor(cameraX * .62) % 312;
   for (let x = -offset - 312; x < VIEW_W + 360; x += 312) {
-    noise(x, trainY+6, 304, trainH-4, '#2a1a0f', '#5b3b20', 10);
+    noise(x, trainY+6, 304, trainH-4, '#332012', '#6b4626', 10);
     rect(x+4, trainY+12, 296, 2, C.gold0);
     rect(x+4, trainY+trainH-18, 296, 2, C.gold0);
     rect(x+300, trainY, 8, trainH+6, C.black);
     rect(x+290, trainY+4, 4, trainH, C.bronze2);
-
-    // passenger door/window block without letters
     rect(x+36, trainY+26, 38, 50, C.black);
-    rect(x+42, trainY+32, 26, 18, C.paper);
+    rect(x+42, trainY+32, 26, 18, '#d8c28a');
     rect(x+48, trainY+36, 14, 10, '#5a3920');
     rect(x+44, trainY+58, 22, 3, C.gold0);
-    rect(x+50, trainY+66, 12, 3, C.gold0);
-
-    // central cargo panel without letters
     rect(x+108, trainY+24, 96, 4, C.gold0);
     rect(x+116, trainY+40, 72, 2, C.bronze2);
     rect(x+130, trainY+56, 54, 2, C.bronze2);
-    rect(x+148, trainY+64, 26, 3, C.gold0);
-
-    // small inspection/connection door without letters
     rect(x+232, trainY+26, 34, 50, C.black);
     rect(x+238, trainY+32, 22, 18, '#47301b');
     rect(x+240, trainY+58, 18, 3, C.gold0);
@@ -147,7 +236,7 @@ function drawLongIthacaTrain() {
 }
 
 function drawPlatform() {
-  noise(0,GROUND_Y,VIEW_W,VIEW_H-GROUND_Y,'#1b1209','#3b2a18',10);
+  noise(0,GROUND_Y,VIEW_W,VIEW_H-GROUND_Y,'#21170f','#4f3922',10);
   rect(0,GROUND_Y,VIEW_W,5,C.gold1);
   rect(0,GROUND_Y+4,VIEW_W,2,C.gold2);
   rect(0,GROUND_Y+34,VIEW_W,5,C.black);
@@ -167,24 +256,34 @@ function drawForegroundTrainDetails() {
 }
 function drawPoster(x,y){ rect(x-4,y-4,56,70,C.black); noise(x,y,48,62,C.paper,C.paperLight,8); rect(x+12,y+10,24,22,'#6b3326'); rect(x+16,y+6,16,8,'#2c1b14'); rect(x+10,y+40,30,4,'#332217'); rect(x+12,y+50,32,4,'#332217'); rect(x+34,y+54,12,10,C.red); }
 function drawNameColumn(x,y){ rect(x-4,y-4,44,78,C.black); noise(x,y,36,70,'#3a2515','#694621',8); rect(x+5,y+14,24,4,C.gold1); rect(x+7,y+28,20,3,C.gold0); rect(x+8,y+44,18,3,C.bronze2); rect(x+4,y+60,28,4,C.bronze2); }
-function drawCargoMark(x,y){ rect(x-6,y+4,124,60,C.black); noise(x,y,112,56,'#422414','#7e4f2d',8); rect(x+20,y+18,64,4,C.gold0); rect(x+30,y+34,50,4,C.gold0); rect(x+46,y+46,28,4,C.bronze2); }
-function drawCheckpoint(x,y){ rect(x-8,y+8,148,104,C.black); noise(x,y+16,132,88,'#3a2512','#6c4723',8); rect(x+10,y+32,112,6,C.gold1); rect(x+18,y+58,88,4,C.bronze2); rect(x+32,y+74,58,4,C.gold0); line(x+120,y+12,x+182,y+64,C.gold1); line(x+182,y+64,x+218,y+64,C.bronze2); line(x+126,y+14,x+184,y+96,C.black); }
-function drawDebris(x,y){ rect(x,y+28,92,12,C.black); rect(x+8,y+20,30,10,C.rustDark || '#351914'); rect(x+40,y+14,40,8,C.bronze0); rect(x+72,y+8,8,24,C.brassDark || C.bronze2); }
+function drawCargoMark(x,y){ rect(x-6,y+4,124,60,C.black); noise(x,y,112,56,'#4c2a16','#8a5830',8); rect(x+20,y+18,64,4,C.gold0); rect(x+30,y+34,50,4,C.gold0); rect(x+46,y+46,28,4,C.bronze2); }
+function drawCheckpoint(x,y){ rect(x-8,y+8,148,104,C.black); noise(x,y+16,132,88,'#463019','#7a5429',8); rect(x+10,y+32,112,6,C.gold1); rect(x+18,y+58,88,4,C.bronze2); rect(x+32,y+74,58,4,C.gold0); line(x+120,y+12,x+182,y+64,C.gold1); line(x+182,y+64,x+218,y+64,C.bronze2); line(x+126,y+14,x+184,y+96,C.black); }
+function drawDebris(x,y){ rect(x,y+28,92,12,C.black); rect(x+8,y+20,30,10,'#351914'); rect(x+40,y+14,40,8,C.bronze0); rect(x+72,y+8,8,24,C.bronze2); }
 
-function drawNpc(x,y,type){ const palette={...heroPalette}; palette.c=type===0?'#2c2418':type===1?'#201914':'#17120e'; palette.h=type===0?'#8a6b36':type===1?'#5e4930':'#a4823d'; palette.b=type===2?C.gold2:C.gold1; sprite(npcSprite,palette,x-17,y,NPC_SCALE,false); if(type===0) rect(x+17,y+17,12,24,C.paper); if(type===1) rect(x+14,y+45,18,12,'#6b4d31'); if(type===2) rect(x+14,y+28,28,6,C.gold2); }
+function drawNpc(x,y,type){
+  let matrix = officerSprite;
+  const palette={ k:C.black, s:C.skin, o:C.black, c:C.officer, h:C.gold0, b:C.gold2, l:C.black, r:C.red, g:C.gold1 };
+  if(type===1){ matrix = survivorSprite; palette.c=C.survivor; palette.h='#7c5a35'; palette.r=C.redDark; }
+  if(type===2){ matrix = inspectorSprite; palette.c='#17120e'; palette.h='#a4823d'; palette.g=C.gold2; }
+  sprite(matrix,palette,x-19,y,NPC_SCALE,false);
+  if(type===0) rect(x+18,y+36,18,28,C.paper);
+  if(type===1) rect(x+14,y+72,25,16,'#6b4d31');
+  if(type===2) rect(x+14,y+50,36,8,C.gold2);
+}
 function drawGlyph(x,y,active){ rect(x-(active?34:20),y-2,active?68:40,active?28:20,C.black); rect(x-(active?32:18),y,active?64:36,active?26:18,active?C.gold1:'#4a3520'); rect(x-(active?28:14),y+4,active?56:28,active?18:10,active?'#171008':'#120d08'); text(active?'E':'...',x-(active?6:10),y+(active?21:15),active?C.gold2:'#a78b4a',active?14:10); }
-function drawHero(){ const moving=input.left||input.right; const frame=moving?(Math.floor(currentTime/110)%2?heroRunA:heroRunB):heroIdle; const heroHeight=frame.length*HERO_SCALE; const hx=screenX(playerX)-14; const hy=GROUND_Y-heroHeight-Math.round(playerY); rect(hx-4,GROUND_Y-3,34,5,'rgba(0,0,0,.72)'); rect(hx-3,hy-3,34,heroHeight+6,'rgba(215,179,93,.08)'); sprite(frame,heroPalette,hx,hy,HERO_SCALE,facing<0); rect(hx+(facing<0?3:24),hy+24,5,2,C.redHi); }
-function drawRainAndScanlines(){ const phase=Math.floor(currentTime/45); for(let i=0;i<52;i++){ const x=(i*87+phase*3)%VIEW_W; const y=(i*37+phase*7)%VIEW_H; rect(x,y,1,5,'rgba(215,179,93,.11)'); } for(let y=0;y<VIEW_H;y+=3) rect(0,y,VIEW_W,1,'rgba(0,0,0,.07)'); }
+function drawHero(){ const moving=input.left||input.right; const frame=moving?(Math.floor(currentTime/110)%2?heroRunA:heroRunB):heroIdle; const heroHeight=frame.length*HERO_SCALE; const hx=screenX(playerX)-14; const hy=GROUND_Y-heroHeight-Math.round(playerY); rect(hx-4,GROUND_Y-3,34,5,'rgba(0,0,0,.72)'); rect(hx-3,hy-3,34,heroHeight+6,'rgba(240,210,129,.07)'); sprite(frame,heroPalette,hx,hy,HERO_SCALE,facing<0); rect(hx+(facing<0?3:24),hy+24,5,2,C.redHi); }
+function drawRainAndScanlines(){ const phase=Math.floor(currentTime/45); for(let i=0;i<48;i++){ const x=(i*87+phase*3)%VIEW_W; const y=(i*37+phase*7)%VIEW_H; rect(x,y,1,5,'rgba(215,179,93,.08)'); } for(let y=0;y<VIEW_H;y+=3) rect(0,y,VIEW_W,1,'rgba(0,0,0,.05)'); }
 
 function drawScene(){
   cameraX=Math.max(0,Math.min(WORLD_W-VIEW_W,playerX-340));
   drawSky();
-  drawLongIthacaTrain();
+  drawStationArchitecture();
+  drawLongTrain();
   drawForegroundTrainDetails();
   drawPlatform();
   if(screenX(1520)>-200&&screenX(1520)<VIEW_W+200)drawDebris(screenX(1480),316);
   if(screenX(2440)>-200&&screenX(2440)<VIEW_W+200)drawDebris(screenX(2380),316);
-  entities.forEach(e=>{ const x=screenX(e.x); if(x<-160||x>VIEW_W+160)return; if(e.kind==='npc'){ const type=e.id==='survivor'?1:e.id==='inspector'?2:0; drawNpc(x,GROUND_Y-npcSprite.length*NPC_SCALE,type); } });
+  entities.forEach(e=>{ const x=screenX(e.x); if(x<-160||x>VIEW_W+160)return; if(e.kind==='npc'){ const type=e.id==='survivor'?1:e.id==='inspector'?2:0; drawNpc(x,GROUND_Y-13*NPC_SCALE,type); } });
   drawHero();
   entities.forEach(e=>{ const x=screenX(e.x); if(x<-160||x>VIEW_W+160)return; drawGlyph(x,GROUND_Y-115,near&&near.id===e.id); });
   drawRainAndScanlines();
