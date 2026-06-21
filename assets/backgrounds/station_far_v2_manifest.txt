@@ -1,0 +1,4 @@
+station_far.png v2
+Generated as a higher-detail pixel-art PNG background for the Troy ruined station.
+Resolution: 1536x432
+Notes: reduced giant X trusses, added arched roof, platform depth, columns, signs, lamps, and darker negative space for character readability.
