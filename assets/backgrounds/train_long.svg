@@ -1,56 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="936" height="110" viewBox="0 0 936 110" shape-rendering="crispEdges">
+  <defs>
+    <g id="rivets"><rect x="18" y="25" width="2" height="2" fill="#c49b45" opacity=".5"/><rect x="42" y="25" width="2" height="2" fill="#c49b45" opacity=".45"/><rect x="66" y="25" width="2" height="2" fill="#c49b45" opacity=".5"/><rect x="90" y="25" width="2" height="2" fill="#c49b45" opacity=".45"/><rect x="114" y="25" width="2" height="2" fill="#c49b45" opacity=".5"/><rect x="138" y="25" width="2" height="2" fill="#c49b45" opacity=".45"/><rect x="162" y="25" width="2" height="2" fill="#c49b45" opacity=".5"/><rect x="186" y="25" width="2" height="2" fill="#c49b45" opacity=".45"/><rect x="210" y="25" width="2" height="2" fill="#c49b45" opacity=".5"/><rect x="234" y="25" width="2" height="2" fill="#c49b45" opacity=".45"/><rect x="258" y="25" width="2" height="2" fill="#c49b45" opacity=".5"/></g>
+    <g id="scratch"><rect x="16" y="42" width="28" height="1" fill="#c49b45" opacity=".34"/><rect x="72" y="56" width="43" height="1" fill="#7f5a28" opacity=".52"/><rect x="186" y="70" width="36" height="1" fill="#b98c3c" opacity=".28"/><rect x="248" y="36" width="25" height="1" fill="#c49b45" opacity=".30"/></g>
+    <g id="carA"><polygon points="0,18 304,15 304,95 0,97" fill="#382111"/><rect x="300" y="9" width="8" height="97" fill="#050403"/><rect x="291" y="17" width="4" height="80" fill="#9d7234"/><rect y="83" width="304" height="14" fill="#0a0705"/><rect x="12" y="91" width="80" height="4" fill="#2c1c0f"/><rect x="116" y="91" width="78" height="4" fill="#2c1c0f"/><rect x="220" y="91" width="66" height="4" fill="#2c1c0f"/><rect x="34" y="43" width="40" height="40" fill="#060504"/><rect x="42" y="49" width="25" height="15" fill="#d7bd72"/><rect x="48" y="53" width="13" height="8" fill="#4f321a"/><rect x="44" y="72" width="23" height="2" fill="#9d7234"/><rect x="108" y="42" width="96" height="4" fill="#b98c3c"/><rect x="116" y="56" width="72" height="2" fill="#7f5a28"/><rect x="130" y="70" width="54" height="2" fill="#7f5a28"/><rect x="231" y="43" width="34" height="42" fill="#050403"/><rect x="238" y="50" width="21" height="14" fill="#44301b"/><rect x="240" y="73" width="18" height="2" fill="#8e672e"/><use href="#rivets"/><use href="#scratch"/></g>
+    <g id="carB"><polygon points="0,18 304,15 304,95 0,97" fill="#3d2413"/><rect x="300" y="9" width="8" height="97" fill="#050403"/><rect x="291" y="17" width="4" height="80" fill="#9d7234"/><rect y="83" width="304" height="14" fill="#0a0705"/><rect x="18" y="91" width="68" height="4" fill="#2c1c0f"/><rect x="113" y="91" width="94" height="4" fill="#2c1c0f"/><rect x="232" y="91" width="54" height="4" fill="#2c1c0f"/><rect x="24" y="40" width="58" height="33" fill="#120d08"/><rect x="34" y="47" width="35" height="10" fill="#d7bd72"/><rect x="91" y="42" width="35" height="40" fill="#22150d"/><rect x="139" y="44" width="66" height="3" fill="#c49b45"/><rect x="139" y="59" width="52" height="2" fill="#745225"/><rect x="219" y="42" width="47" height="43" fill="#060504"/><rect x="227" y="49" width="30" height="14" fill="#49311b"/><use href="#rivets"/><use href="#scratch"/></g>
+  </defs>
   <rect width="936" height="110" fill="none"/>
-  <rect x="0" y="8" width="936" height="96" fill="#050403" opacity="0.72"/>
-  <g>
-    <rect x="0" y="12" width="304" height="84" fill="#332012"/>
-    <rect x="4" y="18" width="296" height="2" fill="#9d7a3a"/>
-    <rect x="4" y="78" width="296" height="2" fill="#9d7a3a"/>
-    <rect x="300" y="8" width="8" height="98" fill="#050403"/>
-    <rect x="290" y="12" width="4" height="84" fill="#8d642f"/>
-    <rect x="36" y="38" width="38" height="50" fill="#050403"/>
-    <rect x="42" y="44" width="26" height="18" fill="#d8c28a"/>
-    <rect x="48" y="48" width="14" height="10" fill="#5a3920"/>
-    <rect x="44" y="70" width="22" height="3" fill="#9d7a3a"/>
-    <rect x="108" y="36" width="96" height="4" fill="#9d7a3a"/>
-    <rect x="116" y="52" width="72" height="2" fill="#8d642f"/>
-    <rect x="130" y="68" width="54" height="2" fill="#8d642f"/>
-    <rect x="232" y="38" width="34" height="50" fill="#050403"/>
-    <rect x="238" y="44" width="22" height="18" fill="#47301b"/>
-    <rect x="240" y="70" width="18" height="3" fill="#9d7a3a"/>
-  </g>
-  <g transform="translate(312 0)">
-    <rect x="0" y="12" width="304" height="84" fill="#3b2514"/>
-    <rect x="4" y="18" width="296" height="2" fill="#9d7a3a"/>
-    <rect x="4" y="78" width="296" height="2" fill="#9d7a3a"/>
-    <rect x="300" y="8" width="8" height="98" fill="#050403"/>
-    <rect x="290" y="12" width="4" height="84" fill="#8d642f"/>
-    <rect x="24" y="35" width="56" height="34" fill="#15100b"/>
-    <rect x="34" y="43" width="34" height="12" fill="#d1b875"/>
-    <rect x="112" y="36" width="90" height="4" fill="#d7b35d"/>
-    <rect x="126" y="52" width="64" height="3" fill="#8d642f"/>
-    <rect x="220" y="38" width="46" height="50" fill="#050403"/>
-    <rect x="228" y="46" width="30" height="16" fill="#47301b"/>
-  </g>
-  <g transform="translate(624 0)">
-    <rect x="0" y="12" width="304" height="84" fill="#2a1a0f"/>
-    <rect x="4" y="18" width="296" height="2" fill="#9d7a3a"/>
-    <rect x="4" y="78" width="296" height="2" fill="#9d7a3a"/>
-    <rect x="300" y="8" width="8" height="98" fill="#050403"/>
-    <rect x="290" y="12" width="4" height="84" fill="#8d642f"/>
-    <rect x="36" y="38" width="38" height="50" fill="#050403"/>
-    <rect x="42" y="44" width="26" height="18" fill="#d8c28a"/>
-    <rect x="48" y="48" width="14" height="10" fill="#5a3920"/>
-    <rect x="108" y="36" width="96" height="4" fill="#9d7a3a"/>
-    <rect x="116" y="52" width="72" height="2" fill="#8d642f"/>
-    <rect x="232" y="38" width="34" height="50" fill="#050403"/>
-    <rect x="238" y="44" width="22" height="18" fill="#47301b"/>
-  </g>
-  <g opacity="0.38">
-    <rect x="20" y="24" width="1" height="62" fill="#6b4626"/>
-    <rect x="148" y="24" width="1" height="62" fill="#6b4626"/>
-    <rect x="344" y="24" width="1" height="62" fill="#6b4626"/>
-    <rect x="502" y="24" width="1" height="62" fill="#6b4626"/>
-    <rect x="660" y="24" width="1" height="62" fill="#6b4626"/>
-    <rect x="820" y="24" width="1" height="62" fill="#6b4626"/>
-  </g>
+  <rect y="10" width="936" height="93" fill="#040302" opacity=".84"/>
+  <polygon points="0,16 936,10 936,101 0,101" fill="#24150c"/>
+  <polygon points="0,20 936,15 936,34 0,39" fill="#4a2b14"/>
+  <rect y="83" width="936" height="18" fill="#0b0806"/>
+  <rect y="26" width="936" height="2" fill="#b98c3c"/>
+  <rect y="76" width="936" height="3" fill="#8f672e"/>
+  <rect y="92" width="936" height="2" fill="#4d351b"/>
+  <use href="#carA" x="0"/><use href="#carB" x="312"/><use href="#carA" x="624" opacity=".86"/>
+  <rect x="82" y="14" width="22" height="4" fill="#2b1d10"/><rect x="85" y="10" width="16" height="4" fill="#6a4b24"/><rect x="402" y="14" width="22" height="4" fill="#2b1d10"/><rect x="405" y="10" width="16" height="4" fill="#6a4b24"/><rect x="706" y="14" width="22" height="4" fill="#2b1d10"/><rect x="709" y="10" width="16" height="4" fill="#6a4b24"/>
+  <g opacity=".42"><rect x="20" y="35" width="12" height="1" fill="#c49b45"/><rect x="78" y="43" width="17" height="1" fill="#c49b45"/><rect x="136" y="51" width="22" height="1" fill="#c49b45"/><rect x="194" y="59" width="27" height="1" fill="#c49b45"/><rect x="356" y="37" width="24" height="1" fill="#c49b45"/><rect x="516" y="53" width="31" height="1" fill="#c49b45"/><rect x="676" y="39" width="18" height="1" fill="#c49b45"/><rect x="820" y="63" width="38" height="1" fill="#c49b45"/></g>
+  <rect x="18" y="101" width="50" height="3" fill="#5b3d1d"/><rect x="114" y="101" width="50" height="3" fill="#5b3d1d"/><rect x="210" y="101" width="50" height="3" fill="#5b3d1d"/><rect x="306" y="101" width="50" height="3" fill="#5b3d1d"/><rect x="402" y="101" width="50" height="3" fill="#5b3d1d"/><rect x="498" y="101" width="50" height="3" fill="#5b3d1d"/><rect x="594" y="101" width="50" height="3" fill="#5b3d1d"/><rect x="690" y="101" width="50" height="3" fill="#5b3d1d"/><rect x="786" y="101" width="50" height="3" fill="#5b3d1d"/><rect x="882" y="101" width="50" height="3" fill="#5b3d1d"/>
 </svg>
