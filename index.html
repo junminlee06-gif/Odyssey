@@ -2,11 +2,24 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>트로이 폐허역</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>오디세이아: 트로이 폐허역</title>
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
+  <main id="game">
+    <canvas id="screen" width="384" height="216" aria-label="트로이 폐허역 픽셀 게임 화면"></canvas>
+    <header id="hud"><b>OUTIS</b><span>트로이 폐허역 · 이타카행 연결편</span><em id="nameNow">귀환병</em></header>
+    <div id="hint">A/D 이동 · Space 점프 · E 상호작용 · I 신분철</div>
+    <button id="ticketBtn" class="paper">귀향표</button>
+    <button id="nameBtn" class="paper dark">신분철</button>
+    <section id="touch">
+      <div><button id="leftBtn">◀</button><button id="rightBtn">▶</button></div>
+      <div><button id="jumpBtn">점프</button><button id="actBtn">상호작용</button></div>
+    </section>
+    <section id="modal"><article id="panel"></article></section>
+    <section id="cut"></section>
+  </main>
+  <script src="./game.js"></script>
 </body>
 </html>
