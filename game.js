@@ -51,7 +51,11 @@ const assets = {
   heroWalkB: loadImage('./assets/characters/odysseus_walk_b.svg'),
   prop: loadImage('./assets/characters/npc_propagandist.svg'),
   survivor: loadImage('./assets/characters/npc_survivor.svg'),
-  inspector: loadImage('./assets/characters/npc_inspector.svg')
+  inspector: loadImage('./assets/characters/npc_inspector.svg'),
+  poster: loadImage('./assets/objects/poster.svg'),
+  listBoard: loadImage('./assets/objects/list_board.svg'),
+  cargo: loadImage('./assets/objects/cargo_mark.svg'),
+  checkpoint: loadImage('./assets/objects/checkpoint.svg')
 };
 
 const C = {
@@ -164,47 +168,53 @@ function drawPlatform() {
   }
 }
 
-function drawPoster(x, y) {
-  rect(x - 4, y - 4, 56, 70, C.black);
-  rect(x, y, 48, 62, C.paper);
-  rect(x + 12, y + 10, 24, 22, '#6b3326');
-  rect(x + 16, y + 6, 16, 8, '#2c1b14');
-  rect(x + 10, y + 40, 30, 4, '#332217');
-  rect(x + 12, y + 50, 32, 4, '#332217');
-  rect(x + 34, y + 54, 12, 10, C.red);
+function drawFallbackPoster(x, y) {
+  rect(x, y, 56, 70, C.black);
+  rect(x + 5, y + 5, 46, 60, C.paper);
+  rect(x + 18, y + 12, 20, 22, '#6b3326');
+  rect(x + 36, y + 53, 12, 10, C.red);
 }
-function drawNameColumn(x, y) {
-  rect(x - 4, y - 4, 44, 78, C.black);
-  rect(x, y, 36, 70, '#3a2515');
-  rect(x + 5, y + 14, 24, 4, C.gold1);
-  rect(x + 7, y + 28, 20, 3, C.gold0);
-  rect(x + 8, y + 44, 18, 3, C.bronze2);
-  rect(x + 4, y + 60, 28, 4, C.bronze2);
+function drawFallbackList(x, y) {
+  rect(x, y, 48, 82, C.black);
+  rect(x + 5, y + 5, 38, 72, '#3a2515');
+  rect(x + 12, y + 16, 24, 4, C.gold1);
+  rect(x + 12, y + 28, 20, 3, C.gold0);
+  rect(x + 12, y + 50, 22, 3, C.gold0);
 }
-function drawCargoMark(x, y) {
-  rect(x - 6, y + 4, 124, 60, C.black);
-  rect(x, y, 112, 56, '#4c2a16');
-  rect(x + 20, y + 18, 64, 4, C.gold0);
-  rect(x + 30, y + 34, 50, 4, C.gold0);
-  rect(x + 46, y + 46, 28, 4, C.bronze2);
+function drawFallbackCargo(x, y) {
+  rect(x, y + 8, 132, 60, C.black);
+  rect(x + 7, y + 4, 116, 58, '#4c2a16');
+  rect(x + 26, y + 23, 68, 4, C.gold0);
+  rect(x + 37, y + 38, 54, 4, C.gold1);
 }
-function drawCheckpoint(x, y) {
-  rect(x - 8, y + 8, 148, 104, C.black);
-  rect(x, y + 16, 132, 88, '#463019');
-  rect(x + 10, y + 32, 112, 6, C.gold1);
-  rect(x + 18, y + 58, 88, 4, C.bronze2);
-  rect(x + 32, y + 74, 58, 4, C.gold0);
-  line(x + 120, y + 12, x + 182, y + 64, C.gold1);
-  line(x + 182, y + 64, x + 218, y + 64, C.bronze2);
-  line(x + 126, y + 14, x + 184, y + 96, C.black);
+function drawFallbackCheckpoint(x, y) {
+  rect(x, y + 14, 146, 104, C.black);
+  rect(x + 8, y + 22, 130, 88, '#463019');
+  rect(x + 16, y + 38, 110, 6, C.gold1);
+  line(x + 132, y + 18, x + 184, y + 68, C.gold1);
 }
 function drawForegroundObjects() {
   const visible = wx => screenX(wx) > -240 && screenX(wx) < VIEW_W + 240;
-  if (visible(340)) drawPoster(screenX(290), 278);
-  if (visible(780)) drawNameColumn(screenX(740), 274);
-  if (visible(1780)) drawCargoMark(screenX(1680), 282);
-  if (visible(3020)) drawNameColumn(screenX(2980), 274);
-  if (visible(4040)) drawCheckpoint(screenX(4040), 254);
+  if (visible(340)) {
+    const x = screenX(290), y = 278;
+    if (!drawImage(assets.poster, x, y, 56, 70)) drawFallbackPoster(x, y);
+  }
+  if (visible(780)) {
+    const x = screenX(740), y = 270;
+    if (!drawImage(assets.listBoard, x, y, 48, 82)) drawFallbackList(x, y);
+  }
+  if (visible(1780)) {
+    const x = screenX(1680), y = 276;
+    if (!drawImage(assets.cargo, x, y, 132, 72)) drawFallbackCargo(x, y);
+  }
+  if (visible(3020)) {
+    const x = screenX(2980), y = 270;
+    if (!drawImage(assets.listBoard, x, y, 48, 82)) drawFallbackList(x, y);
+  }
+  if (visible(4040)) {
+    const x = screenX(4040), y = 244;
+    if (!drawImage(assets.checkpoint, x, y, 184, 118)) drawFallbackCheckpoint(x, y);
+  }
 }
 
 function drawNpc(entity) {
@@ -300,8 +310,13 @@ function describeName(identity) {
   return '분석적이고 우회적인 이름.';
 }
 function openNames() {
-  const html = ['귀환병','라에르테스의 아들','도시를 함락한 자','지략이 많은 자'].map(identity => '<button class="choice" onclick="equippedName=\'' + identity + '\';nameNow.textContent=equippedName;openNames()"><b>[' + identity + ']</b><br>' + describeName(identity) + '</button>').join('') + '<button class="choice locked" disabled><b>[OUTIS / 아무도 아님]</b><br>폐쇄되지 않은 작전명. 이번 장면에서는 장착 불가.</button>';
+  const html = ['귀환병','라에르테스의 아들','도시를 함락한 자','지략이 많은 자'].map(identity => '<button class="choice" onclick="setName(\'' + identity + '\')"><b>[' + identity + ']</b><br>' + describeName(identity) + '</button>').join('') + '<button class="choice locked" disabled><b>[OUTIS / 아무도 아님]</b><br>폐쇄되지 않은 작전명. 이번 장면에서는 장착 불가.</button>';
   show('신분철', html, '');
+}
+function setName(identity) {
+  equippedName = identity;
+  nameNow.textContent = equippedName;
+  openNames();
 }
 function openTicket() {
   show('귀향표', '<div class="ticket">목적지: <b>이타카</b><br>승객명: 부분 번짐<br>상태: 유효<br>경고: OUTIS 작전명 미폐쇄<br><span class="stamp">' + (inspected ? 'APPROVED' : 'VALID') + '</span></div>');
@@ -328,7 +343,8 @@ function interact() {
 
 window.hide = hide;
 window.openNames = openNames;
-window.equippedName = equippedName;
+window.setName = setName;
+window.show = show;
 
 window.onkeydown = event => {
   const key = event.key.toLowerCase();
