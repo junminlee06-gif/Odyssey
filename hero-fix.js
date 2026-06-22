@@ -2,57 +2,74 @@
   function px(x, y, w, h, color) {
     if (typeof rect === 'function') rect(x, y, w, h, color);
   }
-  function heroCore(x, y, flip) {
-    const ox = flip ? -1 : 1;
-    const X = (n) => x + (flip ? 40 - n : n);
-    px(x - 4, GROUND_Y - 3, 48, 5, 'rgba(0,0,0,.78)');
-    px(x + 4, y + 49, 31, 3, 'rgba(215,179,93,.22)');
-    px(X(12), y + 2, 17, 5, '#030201');
-    px(X(9), y + 6, 23, 6, '#070504');
-    px(X(11), y + 10, 19, 7, '#0b0705');
-    px(X(16), y + 9, 10, 8, '#b77b4b');
-    px(X(18), y + 10, 7, 5, '#d79b64');
-    px(X(17), y + 14, 8, 3, '#754026');
-    px(X(13), y + 8, 3, 3, '#2a170e');
-    px(X(24), y + 8, 4, 4, '#21130b');
-    px(X(18), y + 11, 2, 1, '#090604');
-    px(X(23), y + 11, 2, 1, '#090604');
-    px(X(20), y + 13, 2, 1, '#f0c88a');
-    px(X(14), y + 17, 15, 8, '#d8b36c');
-    px(X(10), y + 20, 22, 16, '#9f7643');
-    px(X(7), y + 24, 9, 23, '#c49758');
-    px(X(29), y + 23, 7, 24, '#6b4328');
-    px(X(15), y + 20, 9, 20, '#17110d');
-    px(X(17), y + 20, 6, 10, '#e2c58b');
-    px(X(18), y + 24, 4, 7, '#f1dbad');
-    px(X(11), y + 28, 23, 3, '#2b190f');
-    px(X(11), y + 29, 20, 2, '#c08a40');
-    px(X(12), y + 31, 3, 3, '#e7c668');
-    px(X(29), y + 29, 3, 4, '#e7c668');
-    px(X(5), y + 36, 12, 11, '#b9874e');
-    px(X(2), y + 42, 13, 5, '#8a5630');
-    px(X(0), y + 46, 13, 4, '#56311d');
-    px(X(19), y + 32, 7, 17, '#23160f');
-    px(X(27), y + 32, 7, 17, '#2d1c12');
-    px(X(18), y + 44, 8, 9, '#080605');
-    px(X(27), y + 44, 8, 9, '#090706');
-    px(X(16), y + 51, 11, 4, '#050403');
-    px(X(26), y + 51, 12, 4, '#050403');
-    px(X(4), y + 24, 7, 17, '#17100b');
-    px(X(4), y + 40, 4, 5, '#bd7a4b');
-    px(X(33), y + 30, 4, 11, '#19100b');
-    px(X(35), y + 38, 4, 12, '#5a331f');
-    px(X(34), y + 48, 7, 6, '#2a1810');
-    px(X(10), y + 21, 22, 2, '#f0d281');
-    px(X(11), y + 37, 3, 2, '#e0bd65');
-    px(X(24), y + 34, 3, 2, '#e0bd65');
-    px(X(8), y + 17, 25, 3, '#050403');
+  function pickHeroFrame() {
+    try {
+      if (playerY > 2) return velocityY > 0 ? assets.heroJump : assets.heroFall;
+      if (Math.abs(playerVX) > 18 && typeof heroWalkFrames !== 'undefined') {
+        return heroWalkFrames[Math.floor(currentTime / 92) % heroWalkFrames.length];
+      }
+      if (typeof heroIdleFrames !== 'undefined') return heroIdleFrames[Math.floor(currentTime / 580) % heroIdleFrames.length];
+    } catch (_) {}
+    return null;
   }
-  window.drawHero = function drawHero() {
-    const w = 40, h = 56;
-    const x = sx(playerX) - 20;
-    const y = GROUND_Y - h - Math.round(playerY);
-    const flip = facing < 0;
-    heroCore(x, y, flip);
-  };
+  function safeDrawImage(image, x, y, w, h, flip) {
+    try {
+      if (!image || !image.complete || image.naturalWidth === 0) return false;
+      ctx.save();
+      ctx.imageSmoothingEnabled = false;
+      if (flip) {
+        ctx.scale(-1, 1);
+        ctx.drawImage(image, -Math.round(x + w), Math.round(y), Math.round(w), Math.round(h));
+      } else {
+        ctx.drawImage(image, Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+      }
+      ctx.restore();
+      return true;
+    } catch (_) {
+      try { ctx.restore(); } catch (e) {}
+      return false;
+    }
+  }
+  function visibleOverlay(x, y, flip) {
+    const X = (n) => x + (flip ? 48 - n : n);
+    px(x - 5, GROUND_Y - 3, 58, 5, 'rgba(0,0,0,.80)');
+    px(X(12), y + 3, 18, 5, '#030201');
+    px(X(9), y + 8, 26, 7, '#090605');
+    px(X(16), y + 12, 11, 8, '#b77b4b');
+    px(X(13), y + 20, 24, 19, 'rgba(230,214,170,.72)');
+    px(X(16), y + 23, 10, 23, '#15100d');
+    px(X(11), y + 32, 25, 3, '#c08a40');
+    px(X(7), y + 28, 9, 24, 'rgba(232,220,180,.58)');
+    px(X(32), y + 28, 8, 24, 'rgba(232,220,180,.48)');
+    px(X(5), y + 43, 12, 12, '#8a5630');
+    px(X(20), y + 39, 8, 18, '#17110d');
+    px(X(31), y + 39, 8, 18, '#1d140f');
+    px(X(17), y + 53, 12, 4, '#050403');
+    px(X(29), y + 53, 13, 4, '#050403');
+    px(X(3), y + 50, 14, 3, '#09c4a4');
+    px(X(20), y + 35, 5, 5, '#09c4a4');
+    px(X(24), y + 41, 6, 7, '#d7b35d');
+    px(X(32), y + 40, 5, 7, '#8b1e1e');
+  }
+  try {
+    drawHero = function drawHero() {
+      const w = 48;
+      const h = 64;
+      const x = sx(playerX) - 24;
+      const y = GROUND_Y - h - Math.round(playerY) + 4;
+      const flip = facing < 0;
+      const image = pickHeroFrame();
+      safeDrawImage(image, x, y, w, h, flip);
+      visibleOverlay(x, y, flip);
+    };
+  } catch (_) {
+    window.drawHero = function drawHero() {
+      const w = 48;
+      const h = 64;
+      const x = sx(playerX) - 24;
+      const y = GROUND_Y - h - Math.round(playerY) + 4;
+      const flip = facing < 0;
+      visibleOverlay(x, y, flip);
+    };
+  }
 })();
