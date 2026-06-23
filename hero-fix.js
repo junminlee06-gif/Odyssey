@@ -18,12 +18,12 @@
       .catch(() => {});
   }
 
-  loadB64('./assets/characters/outis_real_idle.b64?v=outis-motion-3', image => {
+  loadB64('./assets/characters/outis_real_idle.b64?v=outis-motion-4', image => {
     idleImage = image;
     idleReady = true;
   });
 
-  loadB64('./assets/characters/outis_walk6_sheet.b64?v=walk6-real-1', image => {
+  loadB64('./assets/characters/outis_walk6_sheet.b64?v=walk6-strong-stride-1', image => {
     walkSheet = image;
     walkReady = true;
   });
