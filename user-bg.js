@@ -1,12 +1,14 @@
 (() => {
-  const layerVersion = 'layered-bg-1';
+  const layerVersion = 'layered-bg-zoom-1';
+  const BG_SCALE = 1.72;
+  const TOP_Y = -10;
   const layers = [
-    { name: 'sky', src: './assets/user/game/bg_01_sky.png', parallax: 0.02, repeat: true },
-    { name: 'far', src: './assets/user/game/bg_02_far_city.png', parallax: 0.08, repeat: true },
-    { name: 'mid', src: './assets/user/game/bg_03_mid_city.png', parallax: 0.18, repeat: true },
-    { name: 'roof', src: './assets/user/game/bg_06_roof.png', parallax: 0.24, repeat: true },
-    { name: 'train', src: './assets/user/game/bg_04_train.png', parallax: 0.62, repeat: true },
-    { name: 'platform', src: './assets/user/game/bg_05_platform.png', parallax: 0.95, repeat: true }
+    { name: 'sky', src: './assets/user/game/bg_01_sky.png', parallax: 0.03, repeat: true, yOffset: 0 },
+    { name: 'far', src: './assets/user/game/bg_02_far_city.png', parallax: 0.13, repeat: true, yOffset: 0 },
+    { name: 'mid', src: './assets/user/game/bg_03_mid_city.png', parallax: 0.28, repeat: true, yOffset: 0 },
+    { name: 'roof', src: './assets/user/game/bg_06_roof.png', parallax: 0.42, repeat: true, yOffset: -6 },
+    { name: 'train', src: './assets/user/game/bg_04_train.png', parallax: 0.72, repeat: true, yOffset: 0 },
+    { name: 'platform', src: './assets/user/game/bg_05_platform.png', parallax: 1.0, repeat: true, yOffset: 0 }
   ].map(layer => {
     const image = new Image();
     image.src = `${layer.src}?v=${layerVersion}`;
@@ -17,9 +19,9 @@
     const image = layer.image;
     if (!image.complete || !image.naturalWidth) return false;
 
-    const destW = VIEW_W;
+    const destW = Math.round(VIEW_W * BG_SCALE);
     const destH = Math.round(image.naturalHeight * destW / image.naturalWidth);
-    const y = Math.round(GROUND_Y - destH + 4);
+    const y = TOP_Y + (layer.yOffset || 0);
     const rawOffset = -Math.floor(cameraX * layer.parallax);
     const offset = ((rawOffset % destW) + destW) % destW;
 
@@ -38,8 +40,6 @@
 
   function drawLayeredBackground() {
     rect(0, 0, VIEW_W, VIEW_H, '#050607');
-    rect(0, 0, VIEW_W, 152, '#10151f');
-    for (let y = 0; y < 152; y += 18) rect(0, y, VIEW_W, 1, 'rgba(230,183,90,.035)');
 
     let loaded = 0;
     for (const layer of layers) {
