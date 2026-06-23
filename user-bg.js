@@ -1,31 +1,62 @@
 (() => {
-  const userBg = new Image();
-  userBg.src = './assets/user/game/bg_00_composite.png?v=uploaded-bg-single-1';
+  const layerVersion = 'layered-bg-1';
+  const layers = [
+    { name: 'sky', src: './assets/user/game/bg_01_sky.png', parallax: 0.02, repeat: true },
+    { name: 'far', src: './assets/user/game/bg_02_far_city.png', parallax: 0.08, repeat: true },
+    { name: 'mid', src: './assets/user/game/bg_03_mid_city.png', parallax: 0.18, repeat: true },
+    { name: 'roof', src: './assets/user/game/bg_06_roof.png', parallax: 0.24, repeat: true },
+    { name: 'train', src: './assets/user/game/bg_04_train.png', parallax: 0.62, repeat: true },
+    { name: 'platform', src: './assets/user/game/bg_05_platform.png', parallax: 0.95, repeat: true }
+  ].map(layer => {
+    const image = new Image();
+    image.src = `${layer.src}?v=${layerVersion}`;
+    return { ...layer, image };
+  });
 
-  function drawUploadedComposite() {
-    if (!userBg.complete || !userBg.naturalWidth) return false;
+  function drawUploadedLayer(layer) {
+    const image = layer.image;
+    if (!image.complete || !image.naturalWidth) return false;
 
     const destW = VIEW_W;
-    const destH = Math.round(userBg.naturalHeight * destW / userBg.naturalWidth);
+    const destH = Math.round(image.naturalHeight * destW / image.naturalWidth);
     const y = Math.round(GROUND_Y - destH + 4);
+    const rawOffset = -Math.floor(cameraX * layer.parallax);
+    const offset = ((rawOffset % destW) + destW) % destW;
 
     ctx.save();
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(userBg, 0, y, destW, destH);
+    if (layer.repeat) {
+      for (let x = offset - destW; x < VIEW_W + destW; x += destW) {
+        ctx.drawImage(image, Math.round(x), y, destW, destH);
+      }
+    } else {
+      ctx.drawImage(image, 0, y, destW, destH);
+    }
     ctx.restore();
     return true;
   }
 
-  function drawUploadedScene() {
+  function drawLayeredBackground() {
     rect(0, 0, VIEW_W, VIEW_H, '#050607');
     rect(0, 0, VIEW_W, 152, '#10151f');
     for (let y = 0; y < 152; y += 18) rect(0, y, VIEW_W, 1, 'rgba(230,183,90,.035)');
 
-    if (!drawUploadedComposite()) {
+    let loaded = 0;
+    for (const layer of layers) {
+      if (drawUploadedLayer(layer)) loaded++;
+    }
+    return loaded >= 3;
+  }
+
+  function drawUploadedScene() {
+    if (!drawLayeredBackground()) {
       drawBackground();
+      drawStationPixelPass();
       drawTrain();
+      drawTrainPixelPass();
       drawForegroundObjects();
       drawPlatform();
+      drawPlatformPixelPass();
     } else {
       rect(0, GROUND_Y, VIEW_W, 2, 'rgba(230,183,90,.72)');
       rect(0, GROUND_Y + 58, VIEW_W, 3, 'rgba(64,45,23,.70)');
