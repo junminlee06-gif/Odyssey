@@ -1,6 +1,6 @@
 (() => {
   const userBg = new Image();
-  userBg.src = './assets/user/game/bg_00_composite.png?v=uploaded-bg-2';
+  userBg.src = './assets/user/game/bg_00_composite.png?v=uploaded-bg-single-1';
 
   function drawUploadedComposite() {
     if (!userBg.complete || !userBg.naturalWidth) return false;
@@ -8,13 +8,10 @@
     const destW = VIEW_W;
     const destH = Math.round(userBg.naturalHeight * destW / userBg.naturalWidth);
     const y = Math.round(GROUND_Y - destH + 4);
-    const offset = -Math.floor(cameraX * 0.62) % destW;
 
     ctx.save();
     ctx.imageSmoothingEnabled = false;
-    for (let x = offset - destW; x < VIEW_W + destW; x += destW) {
-      ctx.drawImage(userBg, Math.round(x), y, destW, destH);
-    }
+    ctx.drawImage(userBg, 0, y, destW, destH);
     ctx.restore();
     return true;
   }
