@@ -1,12 +1,11 @@
 (() => {
-  const layerVersion = 'floor-script-1';
+  const layerVersion = 'train-cars-1';
   const BG_SCALE = 2.0;
   const layers = [
     { name: 'sky', src: './assets/user/game/bg_01_sky.png', parallax: 0.03 },
     { name: 'far', src: './assets/user/game/bg_02_far_city.png', parallax: 0.13 },
     { name: 'mid', src: './assets/user/game/bg_03_mid_city.png', parallax: 0.28 },
-    { name: 'roof', src: './assets/user/game/bg_06_roof.png', parallax: 0.42 },
-    { name: 'train', src: './assets/user/game/bg_04_train.png', parallax: 0.72 }
+    { name: 'roof', src: './assets/user/game/bg_06_roof.png', parallax: 0.42 }
   ].map(layer => {
     const image = new Image();
     image.src = `${layer.src}?v=${layerVersion}`;
@@ -15,6 +14,12 @@
 
   const floor = new Image();
   floor.src = './assets/user/game/fx_floor_wet.png?v=' + layerVersion;
+
+  const trainCar = new Image();
+  trainCar.src = './assets/user/game/obj_car.png?v=' + layerVersion;
+
+  const loco = new Image();
+  loco.src = './assets/user/game/obj_loco.png?v=' + layerVersion;
 
   function drawRepeatedImage(image, parallax, y, width, height) {
     const rawOffset = -Math.floor(cameraX * parallax);
@@ -36,6 +41,38 @@
     return true;
   }
 
+  function drawTrainCars() {
+    if (!trainCar.complete || !trainCar.naturalWidth) return false;
+
+    const parallax = 0.72;
+    const carW = 420;
+    const carH = Math.round(trainCar.naturalHeight * carW / trainCar.naturalWidth);
+    const y = 242;
+    const gap = -8;
+    const step = carW + gap;
+    const rawOffset = -Math.floor(cameraX * parallax);
+    const offset = ((rawOffset % step) + step) % step;
+
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+
+    for (let x = offset - step * 2; x < VIEW_W + step * 2; x += step) {
+      ctx.drawImage(trainCar, Math.round(x), y, carW, carH);
+    }
+
+    if (loco.complete && loco.naturalWidth) {
+      const locoW = 420;
+      const locoH = Math.round(loco.naturalHeight * locoW / loco.naturalWidth);
+      const locoX = Math.round(-cameraX * parallax - 260);
+      if (locoX > -locoW - 80 && locoX < VIEW_W + 80) {
+        ctx.drawImage(loco, locoX, y - 8, locoW, locoH);
+      }
+    }
+
+    ctx.restore();
+    return true;
+  }
+
   function drawFloor() {
     if (!floor.complete || !floor.naturalWidth) {
       rect(0, GROUND_Y + 2, VIEW_W, VIEW_H - GROUND_Y, '#12151b');
@@ -53,6 +90,7 @@
     for (const layer of layers) {
       if (drawLayer(layer)) loaded++;
     }
+    drawTrainCars();
     drawFloor();
     return loaded >= 3;
   }
