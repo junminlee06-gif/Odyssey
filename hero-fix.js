@@ -1,68 +1,34 @@
 (() => {
-  let outisImage = null;
-  let outisReady = false;
-  let outisFrames = null;
-  const SRC_W = 48;
-  const SRC_H = 64;
+  const FRAME_W = 48;
+  const FRAME_H = 64;
+  let idleImage = null;
+  let walkSheet = null;
+  let idleReady = false;
+  let walkReady = false;
 
-  fetch('./assets/characters/outis_real_idle.b64?v=outis-motion-1', { cache: 'reload' })
-    .then(response => response.text())
-    .then(text => {
-      const image = new Image();
-      image.src = 'data:image/png;base64,' + text.trim();
-      image.onload = () => {
-        outisImage = image;
-        outisFrames = buildFrames(image);
-        outisReady = true;
-      };
-    })
-    .catch(() => {});
+  function loadB64(path, onload) {
+    fetch(path, { cache: 'reload' })
+      .then(response => response.text())
+      .then(text => {
+        const image = new Image();
+        image.src = 'data:image/png;base64,' + text.trim();
+        image.onload = () => onload(image);
+      })
+      .catch(() => {});
+  }
+
+  loadB64('./assets/characters/outis_real_idle.b64?v=outis-motion-2', image => {
+    idleImage = image;
+    idleReady = true;
+  });
+
+  loadB64('./assets/characters/outis_walk4_sheet.b64?v=walk4-real-1', image => {
+    walkSheet = image;
+    walkReady = true;
+  });
 
   function px(x, y, w, h, color) {
     if (typeof rect === 'function') rect(x, y, w, h, color);
-  }
-
-  function makeFrame(source, cfg) {
-    const frame = document.createElement('canvas');
-    frame.width = SRC_W;
-    frame.height = SRC_H;
-    const c = frame.getContext('2d');
-    c.imageSmoothingEnabled = false;
-
-    for (let y = 0; y < SRC_H; y++) {
-      let dx = 0;
-      if (y < 18) dx += cfg.head || 0;
-      else if (y < 36) dx += cfg.body || 0;
-      else dx += cfg.coat || 0;
-
-      const dy = y + (cfg.y || 0);
-      if (dy < 0 || dy >= SRC_H) continue;
-
-      if (y >= 42) {
-        c.drawImage(source, 0, y, 24, 1, dx + (cfg.leftLeg || 0), dy, 24, 1);
-        c.drawImage(source, 24, y, 24, 1, dx + 24 + (cfg.rightLeg || 0), dy, 24, 1);
-      } else {
-        c.drawImage(source, 0, y, SRC_W, 1, dx, dy, SRC_W, 1);
-      }
-    }
-    return frame;
-  }
-
-  function buildFrames(source) {
-    return {
-      idle: [
-        makeFrame(source, { y: 0 }),
-        makeFrame(source, { y: 1, coat: 1 })
-      ],
-      walk: [
-        makeFrame(source, { y: 0, coat: -1, leftLeg: -2, rightLeg: 1 }),
-        makeFrame(source, { y: -1, head: 1, body: 1, leftLeg: -1, rightLeg: 2 }),
-        makeFrame(source, { y: 0, coat: 1, leftLeg: 2, rightLeg: -2 }),
-        makeFrame(source, { y: 1, head: -1, body: -1, leftLeg: 1, rightLeg: -1 })
-      ],
-      jump: makeFrame(source, { y: -2, coat: -1, leftLeg: -1, rightLeg: 1 }),
-      fall: makeFrame(source, { y: 2, coat: 1, leftLeg: 1, rightLeg: -1 })
-    };
   }
 
   function drawEmergencySilhouette(x, y, flip) {
@@ -80,15 +46,16 @@
     px(X(9), y + 55, 16, 3, '#08c8a7');
   }
 
-  function chooseFrame() {
-    if (!outisFrames) return null;
-    if (playerY > 2) return velocityY > 0 ? outisFrames.jump : outisFrames.fall;
-    const speed = Math.abs(playerVX || 0);
-    if (speed > 18) {
-      const frameTime = Math.max(70, 130 - speed * 0.14);
-      return outisFrames.walk[Math.floor(currentTime / frameTime) % outisFrames.walk.length];
+  function drawSprite(image, sourceX, sourceY, sourceW, sourceH, x, y, w, h, flip) {
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+    if (flip) {
+      ctx.scale(-1, 1);
+      ctx.drawImage(image, sourceX, sourceY, sourceW, sourceH, -Math.round(x + w), Math.round(y), w, h);
+    } else {
+      ctx.drawImage(image, sourceX, sourceY, sourceW, sourceH, Math.round(x), Math.round(y), w, h);
     }
-    return outisFrames.idle[Math.floor(currentTime / 560) % outisFrames.idle.length];
+    ctx.restore();
   }
 
   drawHero = function drawHero() {
@@ -97,19 +64,20 @@
     const x = sx(playerX) - Math.round(w / 2);
     const y = GROUND_Y - h - Math.round(playerY) + 5;
     const flip = facing < 0;
-    const frame = chooseFrame();
+    const speed = Math.abs(playerVX || 0);
 
-    if (outisReady && frame) {
-      ctx.save();
-      ctx.imageSmoothingEnabled = false;
-      px(x - 5, GROUND_Y - 3, w + 10, 5, 'rgba(0,0,0,.78)');
-      if (flip) {
-        ctx.scale(-1, 1);
-        ctx.drawImage(frame, -Math.round(x + w), Math.round(y), w, h);
-      } else {
-        ctx.drawImage(frame, Math.round(x), Math.round(y), w, h);
-      }
-      ctx.restore();
+    px(x - 5, GROUND_Y - 3, w + 10, 5, 'rgba(0,0,0,.78)');
+
+    if (playerY <= 2 && speed > 18 && walkReady && walkSheet) {
+      const frameTime = Math.max(70, 130 - speed * 0.14);
+      const frame = Math.floor(currentTime / frameTime) % 4;
+      drawSprite(walkSheet, frame * FRAME_W, 0, FRAME_W, FRAME_H, x, y, w, h, flip);
+      return;
+    }
+
+    if (idleReady && idleImage) {
+      const idleBob = Math.floor(currentTime / 560) % 2;
+      drawSprite(idleImage, 0, 0, idleImage.naturalWidth, idleImage.naturalHeight, x, y + idleBob, w, h, flip);
       return;
     }
 
