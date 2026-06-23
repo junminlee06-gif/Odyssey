@@ -1,12 +1,12 @@
 (() => {
-  const layerVersion = 'layered-bg-zoom-1';
-  const BG_SCALE = 1.72;
-  const TOP_Y = -10;
+  const layerVersion = 'layered-bg-fit-1';
+  const BG_SCALE = 2.0;
+  const TOP_Y = 0;
   const layers = [
     { name: 'sky', src: './assets/user/game/bg_01_sky.png', parallax: 0.03, repeat: true, yOffset: 0 },
     { name: 'far', src: './assets/user/game/bg_02_far_city.png', parallax: 0.13, repeat: true, yOffset: 0 },
     { name: 'mid', src: './assets/user/game/bg_03_mid_city.png', parallax: 0.28, repeat: true, yOffset: 0 },
-    { name: 'roof', src: './assets/user/game/bg_06_roof.png', parallax: 0.42, repeat: true, yOffset: -6 },
+    { name: 'roof', src: './assets/user/game/bg_06_roof.png', parallax: 0.42, repeat: true, yOffset: 0 },
     { name: 'train', src: './assets/user/game/bg_04_train.png', parallax: 0.72, repeat: true, yOffset: 0 },
     { name: 'platform', src: './assets/user/game/bg_05_platform.png', parallax: 1.0, repeat: true, yOffset: 0 }
   ].map(layer => {
@@ -27,12 +27,8 @@
 
     ctx.save();
     ctx.imageSmoothingEnabled = false;
-    if (layer.repeat) {
-      for (let x = offset - destW; x < VIEW_W + destW; x += destW) {
-        ctx.drawImage(image, Math.round(x), y, destW, destH);
-      }
-    } else {
-      ctx.drawImage(image, 0, y, destW, destH);
+    for (let x = offset - destW; x < VIEW_W + destW; x += destW) {
+      ctx.drawImage(image, Math.round(x), y, destW, destH);
     }
     ctx.restore();
     return true;
@@ -59,7 +55,6 @@
       drawPlatformPixelPass();
     } else {
       rect(0, GROUND_Y, VIEW_W, 2, 'rgba(230,183,90,.72)');
-      rect(0, GROUND_Y + 58, VIEW_W, 3, 'rgba(64,45,23,.70)');
     }
 
     drawParticles();
