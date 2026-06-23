@@ -1,6 +1,7 @@
 (() => {
   const FRAME_W = 48;
   const FRAME_H = 64;
+  const WALK_FRAMES = 6;
   let idleImage = null;
   let walkSheet = null;
   let idleReady = false;
@@ -17,12 +18,12 @@
       .catch(() => {});
   }
 
-  loadB64('./assets/characters/outis_real_idle.b64?v=outis-motion-2', image => {
+  loadB64('./assets/characters/outis_real_idle.b64?v=outis-motion-3', image => {
     idleImage = image;
     idleReady = true;
   });
 
-  loadB64('./assets/characters/outis_walk4_sheet.b64?v=walk4-real-1', image => {
+  loadB64('./assets/characters/outis_walk6_sheet.b64?v=walk6-real-1', image => {
     walkSheet = image;
     walkReady = true;
   });
@@ -69,8 +70,8 @@
     px(x - 5, GROUND_Y - 3, w + 10, 5, 'rgba(0,0,0,.78)');
 
     if (playerY <= 2 && speed > 18 && walkReady && walkSheet) {
-      const frameTime = Math.max(70, 130 - speed * 0.14);
-      const frame = Math.floor(currentTime / frameTime) % 4;
+      const frameTime = Math.max(62, 132 - speed * 0.15);
+      const frame = Math.floor(currentTime / frameTime) % WALK_FRAMES;
       drawSprite(walkSheet, frame * FRAME_W, 0, FRAME_W, FRAME_H, x, y, w, h, flip);
       return;
     }
