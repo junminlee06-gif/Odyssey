@@ -1,6 +1,6 @@
 (() => {
   const userBg = new Image();
-  userBg.src = './assets/user/game/bg_00_composite.png?v=uploaded-bg-1';
+  userBg.src = './assets/user/game/bg_00_composite.png?v=uploaded-bg-2';
 
   function drawUploadedComposite() {
     if (!userBg.complete || !userBg.naturalWidth) return false;
@@ -19,23 +19,33 @@
     return true;
   }
 
-  drawBackground = function drawBackground() {
-    rect(0, 0, VIEW_W, VIEW_H, '#060708');
-    rect(0, 0, VIEW_W, 150, '#10151f');
-    for (let y = 0; y < 150; y += 18) rect(0, y, VIEW_W, 1, 'rgba(230,183,90,.035)');
-    drawUploadedComposite();
-  };
+  function drawUploadedScene() {
+    rect(0, 0, VIEW_W, VIEW_H, '#050607');
+    rect(0, 0, VIEW_W, 152, '#10151f');
+    for (let y = 0; y < 152; y += 18) rect(0, y, VIEW_W, 1, 'rgba(230,183,90,.035)');
 
-  drawTrain = function drawTrain() {
-    // The uploaded composite already contains the train layer.
-  };
+    if (!drawUploadedComposite()) {
+      drawBackground();
+      drawTrain();
+      drawForegroundObjects();
+      drawPlatform();
+    } else {
+      rect(0, GROUND_Y, VIEW_W, 2, 'rgba(230,183,90,.72)');
+      rect(0, GROUND_Y + 58, VIEW_W, 3, 'rgba(64,45,23,.70)');
+    }
 
-  drawForegroundObjects = function drawForegroundObjects() {
-    // Foreground objects will be reintroduced one PNG at a time after the composite is aligned.
-  };
+    drawParticles();
+    entities.forEach(e => {
+      if (e.kind === 'npc') drawNpc(e);
+    });
+    drawHero();
+    entities.forEach(e => {
+      const x = sx(e.x);
+      if (x < -160 || x > VIEW_W + 160) return;
+      drawGlyph(x, e.glyphY || GROUND_Y - 112, near && near.id === e.id);
+    });
+    drawAtmosphere();
+  }
 
-  drawPlatform = function drawPlatform() {
-    rect(0, GROUND_Y, VIEW_W, 2, 'rgba(230,183,90,.65)');
-    rect(0, GROUND_Y + 58, VIEW_W, 3, 'rgba(64,45,23,.65)');
-  };
+  drawScene = drawUploadedScene;
 })();
