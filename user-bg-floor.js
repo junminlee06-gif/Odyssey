@@ -1,5 +1,5 @@
 (() => {
-  const layerVersion = 'train-cars-1';
+  const layerVersion = 'train-cars-2';
   const BG_SCALE = 2.0;
   const layers = [
     { name: 'sky', src: './assets/user/game/bg_01_sky.png', parallax: 0.03 },
@@ -45,10 +45,10 @@
     if (!trainCar.complete || !trainCar.naturalWidth) return false;
 
     const parallax = 0.72;
-    const carW = 420;
+    const carW = 410;
     const carH = Math.round(trainCar.naturalHeight * carW / trainCar.naturalWidth);
-    const y = 242;
-    const gap = -8;
+    const y = GROUND_Y - carH + 2;
+    const gap = -10;
     const step = carW + gap;
     const rawOffset = -Math.floor(cameraX * parallax);
     const offset = ((rawOffset % step) + step) % step;
@@ -61,11 +61,12 @@
     }
 
     if (loco.complete && loco.naturalWidth) {
-      const locoW = 420;
+      const locoW = 360;
       const locoH = Math.round(loco.naturalHeight * locoW / loco.naturalWidth);
-      const locoX = Math.round(-cameraX * parallax - 260);
+      const locoX = Math.round(-cameraX * parallax - 220);
+      const locoY = GROUND_Y - locoH + 2;
       if (locoX > -locoW - 80 && locoX < VIEW_W + 80) {
-        ctx.drawImage(loco, locoX, y - 8, locoW, locoH);
+        ctx.drawImage(loco, locoX, locoY, locoW, locoH);
       }
     }
 
