@@ -2,7 +2,7 @@
   let outisImage = null;
   let outisReady = false;
 
-  fetch('./assets/characters/outis_real_idle.b64', { cache: 'no-cache' })
+  fetch('./assets/characters/outis_real_idle.b64?v=uploaded-idle-2', { cache: 'reload' })
     .then(response => response.text())
     .then(text => {
       const image = new Image();
