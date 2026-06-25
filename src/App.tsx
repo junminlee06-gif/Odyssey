@@ -311,8 +311,19 @@ function App() {
     return `[${names.find(name => name.id === option.requiredNameId)?.displayName}]`
   }
 
+  const artPlayerLeft = `${((frame.x - camera) / 384) * 100}%`
+  const artPlayerTransform = `translateX(-50%) translateY(-${Math.round(frame.y * 0.55)}px) scaleX(${frame.facing === 'left' ? -1 : 1})`
+
   return <main className="gameRoot">
     <canvas ref={canvasRef} className="pixelCanvas" aria-label="트로이 폐허역 도트 게임 화면" />
+
+    <div
+      aria-hidden="true"
+      className={`artPlayer ${frame.walking ? 'walking' : 'idle'} ${frame.y > 0 ? 'jumping' : ''}`}
+      style={{ left: artPlayerLeft, transform: artPlayerTransform }}
+    >
+      <div className="artPlayerSprite" />
+    </div>
 
     <header className="topHud">
       <b>OUTIS</b>
