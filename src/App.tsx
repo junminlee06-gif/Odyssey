@@ -312,17 +312,27 @@ function App() {
   }
 
   const artPlayerLeft = `${((frame.x - camera) / 384) * 100}%`
-  const artPlayerTransform = `translateX(-50%) translateY(-${Math.round(frame.y * 0.55)}px) scaleX(${frame.facing === 'left' ? -1 : 1})`
+  const artPlayerTransform = `translateX(-50%) translateY(-${Math.round(frame.y * 0.85)}px)`
 
   return <main className="gameRoot">
     <canvas ref={canvasRef} className="pixelCanvas" aria-label="트로이 폐허역 도트 게임 화면" />
 
     <div
       aria-hidden="true"
-      className={`artPlayer ${frame.walking ? 'walking' : 'idle'} ${frame.y > 0 ? 'jumping' : ''}`}
+      className={`artPlayer facing-${frame.facing} ${frame.walking ? 'walking' : 'idle'} ${frame.y > 0 ? 'jumping' : ''}`}
       style={{ left: artPlayerLeft, transform: artPlayerTransform }}
     >
-      <div className="artPlayerSprite" />
+      <div className="artRig">
+        <img className="rigPart rigCape" src="/assets/outis_parts/cape.png" alt="" />
+        <img className="rigPart rigCoatBack" src="/assets/outis_parts/coat_back.png" alt="" />
+        <img className="rigPart rigLegBack" src="/assets/outis_parts/leg_back.png" alt="" />
+        <img className="rigPart rigArmBack" src="/assets/outis_parts/arm_back.png" alt="" />
+        <img className="rigPart rigTorso" src="/assets/outis_parts/torso.png" alt="" />
+        <img className="rigPart rigCoatFront" src="/assets/outis_parts/coat_front.png" alt="" />
+        <img className="rigPart rigLegFront" src="/assets/outis_parts/leg_front.png" alt="" />
+        <img className="rigPart rigArmFront" src="/assets/outis_parts/arm_front.png" alt="" />
+        <img className="rigPart rigHead" src="/assets/outis_parts/head.png" alt="" />
+      </div>
     </div>
 
     <header className="topHud">
