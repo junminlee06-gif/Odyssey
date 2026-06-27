@@ -1,6 +1,4 @@
-/* OUTIS AI art overlay layer
-   Final rig source: public/assets/outis_parts/
-*/
+/* OUTIS AI art overlay layer */
 
 .gameRoot::before {
   content: '';
@@ -8,14 +6,11 @@
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background-image:
-    linear-gradient(90deg, rgba(5, 6, 7, 0.42), rgba(5, 6, 7, 0.04) 45%, rgba(5, 6, 7, 0.46)),
-    url('/assets/troy_station_backplate.webp');
+  background-image: linear-gradient(90deg, rgba(5, 6, 7, 0.42), rgba(5, 6, 7, 0.04) 45%, rgba(5, 6, 7, 0.46)), url('/assets/troy_station_backplate.webp');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
   filter: saturate(1.08) contrast(1.12) brightness(1.12);
-  opacity: 1;
 }
 
 .gameRoot::after {
@@ -24,28 +19,11 @@
   inset: 0;
   z-index: 6;
   pointer-events: none;
-  background-image:
-    url('/assets/checkpoint_robot.webp'),
-    radial-gradient(circle at 49% 47%, rgba(236, 207, 134, 0.08), transparent 28%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.34)),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.46), transparent 22%, transparent 78%, rgba(0, 0, 0, 0.46));
+  background-image: url('/assets/checkpoint_robot.webp'), radial-gradient(circle at 49% 47%, rgba(236, 207, 134, 0.08), transparent 28%), linear-gradient(180deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.34)), linear-gradient(90deg, rgba(0, 0, 0, 0.46), transparent 22%, transparent 78%, rgba(0, 0, 0, 0.46));
   background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-  background-size:
-    min(12vw, 126px) auto,
-    cover,
-    cover,
-    cover;
-  background-position:
-    66% calc(100% - 106px),
-    center,
-    center,
-    center;
-  filter:
-    drop-shadow(0 0 2px rgba(239, 213, 148, 0.46))
-    drop-shadow(0 7px 8px rgba(0, 0, 0, 0.9))
-    saturate(1.06)
-    brightness(1.1)
-    contrast(1.1);
+  background-size: min(12vw, 126px) auto, cover, cover, cover;
+  background-position: 66% calc(100% - 106px), center, center, center;
+  filter: drop-shadow(0 7px 8px rgba(0, 0, 0, 0.9)) saturate(1.06) brightness(1.1) contrast(1.1);
   box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.52);
 }
 
@@ -64,215 +42,74 @@
   height: clamp(168px, 20.8vw, 254px);
   pointer-events: none;
   transform-origin: 50% 100%;
-  will-change: left, transform;
-  filter:
-    drop-shadow(0 0 2px rgba(239, 213, 148, 0.42))
-    drop-shadow(0 8px 9px rgba(0, 0, 0, 0.92))
-    saturate(1.02)
-    brightness(1.02)
-    contrast(1.04);
-}
-
-.artPlayer::before,
-.artPlayer::after,
-.artPlayerSprite,
-.artPlayerSprite::before,
-.artPlayerSprite::after {
-  position: absolute;
-  pointer-events: none;
-  background-repeat: no-repeat;
-  background-size: contain;
-  transform-origin: 50% 100%;
-}
-
-.artPlayer::before {
-  content: '';
-  z-index: 1;
-  left: -19%;
-  top: 27%;
-  width: 72%;
-  height: 49%;
-  background-image: url('/assets/outis_parts/cape.png');
-  background-position: center bottom;
-  opacity: 0.9;
-  filter: brightness(0.92) saturate(0.98);
-  transform-origin: 88% 16%;
+  filter: drop-shadow(0 0 2px rgba(239, 213, 148, 0.4)) drop-shadow(0 8px 9px rgba(0, 0, 0, 0.92)) saturate(1.02) brightness(1.02) contrast(1.04);
 }
 
 .artPlayer::after {
   content: '';
-  z-index: 0;
+  position: absolute;
   left: 20%;
   right: 18%;
   bottom: -5px;
   height: 13px;
   border-radius: 50%;
   background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.2) 56%, transparent 76%);
-  transform: scaleX(0.9);
 }
 
-.artPlayerSprite {
-  z-index: 5;
+.artRig {
+  position: absolute;
   inset: 0;
+  transform-origin: 50% 100%;
   animation: outisRigIdle 1.45s ease-in-out infinite;
 }
 
-.artPlayerSprite::before {
-  content: '';
-  z-index: 1;
-  inset: 0;
-  background-image:
-    url('/assets/outis_parts/coat_back.png'),
-    url('/assets/outis_parts/leg_back.png'),
-    url('/assets/outis_parts/arm_back.png');
-  background-size:
-    70% auto,
-    37% auto,
-    32% auto;
-  background-position:
-    42% 86%,
-    43% 90%,
-    33% 50%;
-  filter: brightness(0.9) saturate(0.95);
-  transform-origin: 49% 62%;
+.artPlayer.facing-left .artRig {
+  transform: scaleX(-1);
 }
 
-.artPlayerSprite::after {
-  content: '';
-  z-index: 4;
-  inset: 0;
-  background-image:
-    url('/assets/outis_parts/coat_front.png'),
-    url('/assets/outis_parts/leg_front.png'),
-    url('/assets/outis_parts/arm_front.png'),
-    url('/assets/outis_parts/torso.png'),
-    url('/assets/outis_parts/head.png'),
-    url('/assets/outis_parts/nameplate.png');
-  background-size:
-    66% auto,
-    38% auto,
-    31% auto,
-    64% auto,
-    31% auto,
-    25% auto;
-  background-position:
-    55% 86%,
-    57% 90%,
-    64% 50%,
-    50% 49%,
-    49% 4%,
-    52% 35%;
-  transform-origin: 50% 62%;
+.rigPart {
+  position: absolute;
+  display: block;
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  transform-origin: 50% 50%;
 }
 
-.artPlayer.walking {
-  animation: outisRigStepBody 0.56s cubic-bezier(0.37, 0, 0.63, 1) infinite;
-}
+.rigCape { z-index: 1; width: 64%; left: -8%; top: 34%; transform-origin: 88% 18%; filter: brightness(0.92) saturate(0.98); }
+.rigCoatBack { z-index: 2; width: 49%; left: 25%; top: 50%; transform-origin: 52% 16%; filter: brightness(0.9) saturate(0.96); }
+.rigLegBack { z-index: 3; width: 31%; left: 40%; top: 63%; transform-origin: 48% 15%; filter: brightness(0.88) saturate(0.95); }
+.rigArmBack { z-index: 4; width: 25%; left: 31%; top: 34%; transform-origin: 52% 10%; filter: brightness(0.88) saturate(0.94); }
+.rigTorso { z-index: 5; width: 64%; left: 18%; top: 22%; }
+.rigCoatFront { z-index: 6; width: 52%; left: 26%; top: 51%; transform-origin: 54% 14%; }
+.rigLegFront { z-index: 7; width: 31%; left: 51%; top: 63%; transform-origin: 49% 14%; }
+.rigArmFront { z-index: 8; width: 24%; left: 58%; top: 33%; transform-origin: 48% 9%; }
+.rigHead { z-index: 9; width: 34%; left: 33%; top: 6%; transform-origin: 50% 80%; }
 
-.artPlayer.walking::before {
-  animation: outisRigCape 0.56s cubic-bezier(0.37, 0, 0.63, 1) infinite;
-}
+.artPlayer.walking { animation: outisRigStepBody 0.56s ease-in-out infinite; }
+.artPlayer.walking::after { animation: outisRigShadow 0.56s ease-in-out infinite; }
+.artPlayer.walking .artRig { animation: outisRigBodyWalk 0.56s steps(4, end) infinite; }
+.artPlayer.walking.facing-left .artRig { animation: outisRigBodyWalkLeft 0.56s steps(4, end) infinite; }
+.artPlayer.walking .rigCape { animation: outisRigCape 0.56s ease-in-out infinite; }
+.artPlayer.walking .rigCoatBack, .artPlayer.walking .rigLegBack, .artPlayer.walking .rigArmBack { animation: outisRigBackSet 0.56s steps(4, end) infinite; }
+.artPlayer.walking .rigCoatFront, .artPlayer.walking .rigLegFront, .artPlayer.walking .rigArmFront { animation: outisRigFrontSet 0.56s steps(4, end) infinite; }
+.artPlayer.jumping .artRig { animation: outisRigJump 0.62s ease-in-out infinite; }
+.artPlayer.jumping.facing-left .artRig { animation: outisRigJumpLeft 0.62s ease-in-out infinite; }
 
-.artPlayer.walking::after {
-  animation: outisRigShadow 0.56s cubic-bezier(0.37, 0, 0.63, 1) infinite;
-}
-
-.artPlayer.walking .artPlayerSprite {
-  animation: outisRigTorsoWalk 0.56s steps(4, end) infinite;
-}
-
-.artPlayer.walking .artPlayerSprite::before {
-  animation: outisRigBackSet 0.56s steps(4, end) infinite;
-}
-
-.artPlayer.walking .artPlayerSprite::after {
-  animation: outisRigFrontSet 0.56s steps(4, end) infinite;
-}
-
-.artPlayer.jumping .artPlayerSprite {
-  animation: outisRigJump 0.62s ease-in-out infinite;
-}
-
-.artPlayer.jumping::after {
-  opacity: 0.34;
-  transform: scaleX(0.68);
-}
-
-@keyframes outisRigIdle {
-  0%, 100% { transform: translateY(0) rotate(0deg) skewX(0deg); }
-  50% { transform: translateY(-1.5px) rotate(-0.2deg) skewX(-0.2deg); }
-}
-
-@keyframes outisRigStepBody {
-  0%, 100% { bottom: 19.4%; }
-  25% { bottom: calc(19.4% + 2px); }
-  50% { bottom: 19.4%; }
-  75% { bottom: calc(19.4% + 1px); }
-}
-
-@keyframes outisRigTorsoWalk {
-  0% { transform: translateX(-1px) translateY(0) rotate(-1.2deg); }
-  25% { transform: translateX(1px) translateY(-2.5px) rotate(0.9deg); }
-  50% { transform: translateX(1px) translateY(0) rotate(1.2deg); }
-  75% { transform: translateX(-1px) translateY(-2px) rotate(-0.8deg); }
-  100% { transform: translateX(-1px) translateY(0) rotate(-1.2deg); }
-}
-
-@keyframes outisRigBackSet {
-  0% { transform: translateX(2px) rotate(4deg); }
-  25% { transform: translateX(-1px) translateY(-1px) rotate(0deg); }
-  50% { transform: translateX(-3px) rotate(-5deg); }
-  75% { transform: translateX(0) translateY(-1px) rotate(-1deg); }
-  100% { transform: translateX(2px) rotate(4deg); }
-}
-
-@keyframes outisRigFrontSet {
-  0% { transform: translateX(-3px) rotate(-5deg); }
-  25% { transform: translateX(0) translateY(-1px) rotate(-1deg); }
-  50% { transform: translateX(2px) rotate(4deg); }
-  75% { transform: translateX(-1px) translateY(-1px) rotate(0deg); }
-  100% { transform: translateX(-3px) rotate(-5deg); }
-}
-
-@keyframes outisRigCape {
-  0%, 100% { transform: translateX(-4px) translateY(2px) rotate(2deg) scaleX(1.02); opacity: 0.84; }
-  25% { transform: translateX(-8px) translateY(0) rotate(4deg) scaleX(1.06); opacity: 0.95; }
-  50% { transform: translateX(-3px) translateY(2px) rotate(1.2deg) scaleX(1.01); opacity: 0.82; }
-  75% { transform: translateX(-7px) translateY(1px) rotate(3.3deg) scaleX(1.05); opacity: 0.93; }
-}
-
-@keyframes outisRigShadow {
-  0%, 100% { transform: scaleX(0.82); opacity: 0.52; }
-  25% { transform: scaleX(1.06); opacity: 0.66; }
-  50% { transform: scaleX(0.9); opacity: 0.56; }
-  75% { transform: scaleX(1.02); opacity: 0.63; }
-}
-
-@keyframes outisRigJump {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  45% { transform: translateY(-4px) rotate(-0.9deg); }
-}
+@keyframes outisRigIdle { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-1.5px) rotate(-0.2deg); } }
+@keyframes outisRigStepBody { 0%, 100% { bottom: 19.4%; } 25% { bottom: calc(19.4% + 2px); } 50% { bottom: 19.4%; } 75% { bottom: calc(19.4% + 1px); } }
+@keyframes outisRigBodyWalk { 0% { transform: translateX(-1px) translateY(0) rotate(-1.1deg); } 25% { transform: translateX(1px) translateY(-2.5px) rotate(0.8deg); } 50% { transform: translateX(1px) translateY(0) rotate(1.1deg); } 75% { transform: translateX(-1px) translateY(-2px) rotate(-0.7deg); } 100% { transform: translateX(-1px) translateY(0) rotate(-1.1deg); } }
+@keyframes outisRigBodyWalkLeft { 0% { transform: scaleX(-1) translateX(-1px) translateY(0) rotate(-1.1deg); } 25% { transform: scaleX(-1) translateX(1px) translateY(-2.5px) rotate(0.8deg); } 50% { transform: scaleX(-1) translateX(1px) translateY(0) rotate(1.1deg); } 75% { transform: scaleX(-1) translateX(-1px) translateY(-2px) rotate(-0.7deg); } 100% { transform: scaleX(-1) translateX(-1px) translateY(0) rotate(-1.1deg); } }
+@keyframes outisRigBackSet { 0% { transform: translateX(2px) rotate(3.5deg); } 25% { transform: translateX(-1px) translateY(-1px) rotate(0deg); } 50% { transform: translateX(-3px) rotate(-4deg); } 75% { transform: translateX(0) translateY(-1px) rotate(-1deg); } 100% { transform: translateX(2px) rotate(3.5deg); } }
+@keyframes outisRigFrontSet { 0% { transform: translateX(-3px) rotate(-4deg); } 25% { transform: translateX(0) translateY(-1px) rotate(-1deg); } 50% { transform: translateX(2px) rotate(3.5deg); } 75% { transform: translateX(-1px) translateY(-1px) rotate(0deg); } 100% { transform: translateX(-3px) rotate(-4deg); } }
+@keyframes outisRigCape { 0%, 100% { transform: translateX(-3px) translateY(1px) rotate(1.5deg) scaleX(1.02); } 25% { transform: translateX(-7px) translateY(0) rotate(3.6deg) scaleX(1.05); } 50% { transform: translateX(-2px) translateY(1px) rotate(0.8deg) scaleX(1.01); } 75% { transform: translateX(-6px) translateY(0) rotate(3deg) scaleX(1.04); } }
+@keyframes outisRigShadow { 0%, 100% { transform: scaleX(0.82); opacity: 0.52; } 25% { transform: scaleX(1.06); opacity: 0.66; } 50% { transform: scaleX(0.9); opacity: 0.56; } 75% { transform: scaleX(1.02); opacity: 0.63; } }
+@keyframes outisRigJump { 0%, 100% { transform: translateY(0) rotate(0deg); } 45% { transform: translateY(-4px) rotate(-0.9deg); } }
+@keyframes outisRigJumpLeft { 0%, 100% { transform: scaleX(-1) translateY(0) rotate(0deg); } 45% { transform: scaleX(-1) translateY(-4px) rotate(-0.9deg); } }
 
 @media (max-width: 900px) {
-  .gameRoot::after {
-    background-size: 104px auto, cover, cover, cover;
-    background-position:
-      68% calc(100% - 128px),
-      center,
-      center,
-      center;
-  }
-
-  .artPlayer {
-    bottom: 20.5%;
-    width: 118px;
-    height: 204px;
-  }
-
-  @keyframes outisRigStepBody {
-    0%, 100% { bottom: 20.5%; }
-    25% { bottom: calc(20.5% + 2px); }
-    50% { bottom: 20.5%; }
-    75% { bottom: calc(20.5% + 1px); }
-  }
+  .gameRoot::after { background-size: 104px auto, cover, cover, cover; background-position: 68% calc(100% - 128px), center, center, center; }
+  .artPlayer { bottom: 20.5%; width: 118px; height: 204px; }
+  @keyframes outisRigStepBody { 0%, 100% { bottom: 20.5%; } 25% { bottom: calc(20.5% + 2px); } 50% { bottom: 20.5%; } 75% { bottom: calc(20.5% + 1px); } }
 }
