@@ -34,10 +34,22 @@
 }
 
 .pixelCanvas {
-  z-index: 2;
-  background: transparent;
-  opacity: 0;
-  mix-blend-mode: normal;
+  display: none !important;
+  opacity: 0 !important;
+  mix-blend-mode: normal !important;
+}
+
+.artPlayer,
+.artPlayer.running,
+.artPlayer.walking,
+.artPlayer.idle,
+.artPlayer.jumping,
+.artSprite {
+  filter: none !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  text-shadow: none !important;
+  background: transparent !important;
 }
 
 .artPlayer {
@@ -49,19 +61,11 @@
   pointer-events: none;
   transform-origin: 50% 100%;
   will-change: left, transform;
-  filter: none;
 }
 
 .artPlayer::after {
-  content: '';
-  position: absolute;
-  left: 25%;
-  right: 22%;
-  bottom: 7.5%;
-  height: 7px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.18) 58%, transparent 76%);
-  transform: scaleX(0.9);
+  display: none !important;
+  content: none !important;
 }
 
 .artSprite {
@@ -76,17 +80,8 @@
   -webkit-user-drag: none;
 }
 
-.artPlayer.running {
-  filter: none;
-}
-
-.artPlayer.jumping::after {
-  opacity: 0.34;
-  transform: scaleX(0.68);
-}
-
 .topHud::after {
-  content: 'sprite-clean v20';
+  content: 'walk-clean v21';
   margin-left: auto;
   color: rgba(235, 215, 160, 0.62);
   font-size: 11px;
@@ -106,7 +101,7 @@
   }
 
   .topHud::after {
-    content: 'v20';
+    content: 'v21';
     font-size: 10px;
   }
 }
