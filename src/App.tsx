@@ -5,8 +5,29 @@ import type { PixelEntity } from './pixelRenderer'
 
 const WORLD_WIDTH = 3240
 const MOVE_SPEED = 145
+const RUN_SPEED = 248
 const GRAVITY = 980
 const JUMP_SPEED = 330
+
+const WALK_FRAMES = [
+  '/assets/outis_walk/walk_right_01_contact.png',
+  '/assets/outis_walk/walk_right_02_down.png',
+  '/assets/outis_walk/walk_right_03_passing.png',
+  '/assets/outis_walk/walk_right_04_contact_opposite.png',
+  '/assets/outis_walk/walk_right_05_down_opposite.png',
+  '/assets/outis_walk/walk_right_06_passing_opposite.png'
+]
+
+const RUN_FRAMES = [
+  '/assets/outis_run/run_right_01_contact.png',
+  '/assets/outis_run/run_right_02_down.png',
+  '/assets/outis_run/run_right_03_push.png',
+  '/assets/outis_run/run_right_04_airborne.png',
+  '/assets/outis_run/run_right_05_contact_opposite.png',
+  '/assets/outis_run/run_right_06_down_opposite.png',
+  '/assets/outis_run/run_right_07_push_opposite.png',
+  '/assets/outis_run/run_right_08_airborne_opposite.png'
+]
 
 type NameId = 'returningSoldier' | 'sonOfLaertes' | 'sackerOfCities' | 'manyMinded' | 'outis'
 type Mode = 'play' | 'names' | 'ticket' | 'dialogue' | 'inspection' | 'cutscene'
@@ -19,6 +40,7 @@ type GameFrame = {
   vy: number
   facing: Facing
   walking: boolean
+  running: boolean
   time: number
 }
 
@@ -140,8 +162,8 @@ const cutsceneLines = [
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const keys = useRef({ left: false, right: false })
-  const frameRef = useRef<GameFrame>({ x: 120, y: 0, vy: 0, facing: 'right', walking: false, time: 0 })
+  const keys = useRef({ left: false, right: false, sprint: false })
+  const frameRef = useRef<GameFrame>({ x: 120, y: 0, vy: 0, facing: 'right', walking: false, running: false, time: 0 })
   const modeRef = useRef<Mode>('play')
   const [frame, setFrame] = useState<GameFrame>(frameRef.current)
   const [mode, setMode] = useState<Mode>('play')
@@ -174,9 +196,12 @@ function App() {
       let nextVy = current.vy
       let nextFacing = current.facing
       const canMove = modeRef.current === 'play'
+      const isMoving = canMove && direction !== 0
+      const isRunning = isMoving && keys.current.sprint
 
-      if (canMove && direction !== 0) {
-        nextX = Math.max(70, Math.min(WORLD_WIDTH - 80, current.x + direction * MOVE_SPEED * delta))
+      if (isMoving) {
+        const speed = isRunning ? RUN_SPEED : MOVE_SPEED
+        nextX = Math.max(70, Math.min(WORLD_WIDTH - 80, current.x + direction * speed * delta))
         nextFacing = direction > 0 ? 'right' : 'left'
       }
 
@@ -191,7 +216,8 @@ function App() {
         y: nextY,
         vy: nextVy,
         facing: nextFacing,
-        walking: canMove && direction !== 0,
+        walking: isMoving,
+        running: isRunning,
         time: now
       }
       frameRef.current = next
@@ -207,6 +233,7 @@ function App() {
       const key = event.key.toLowerCase()
       if (key === 'a' || key === 'arrowleft') keys.current.left = true
       if (key === 'd' || key === 'arrowright') keys.current.right = true
+      if (key === 'shift') keys.current.sprint = true
       if ((key === ' ' || key === 'spacebar') && modeRef.current === 'play') {
         event.preventDefault()
         jump()
@@ -221,6 +248,7 @@ function App() {
       const key = event.key.toLowerCase()
       if (key === 'a' || key === 'arrowleft') keys.current.left = false
       if (key === 'd' || key === 'arrowright') keys.current.right = false
+      if (key === 'shift') keys.current.sprint = false
     }
     window.addEventListener('keydown', onKeyDown)
     window.addEventListener('keyup', onKeyUp)
@@ -263,6 +291,10 @@ function App() {
 
   function moveTouch(direction: 'left' | 'right', pressed: boolean) {
     keys.current[direction] = pressed
+  }
+
+  function setTouchRun(pressed: boolean) {
+    keys.current.sprint = pressed
   }
 
   function focusEntity(x: number) {
@@ -312,27 +344,21 @@ function App() {
   }
 
   const artPlayerLeft = `${((frame.x - camera) / 384) * 100}%`
-  const artPlayerTransform = `translateX(-50%) translateY(-${Math.round(frame.y * 0.85)}px)`
+  const artPlayerTransform = `translateX(-50%) translateY(-${Math.round(frame.y * 0.85)}px) scaleX(${frame.facing === 'left' ? -1 : 1})`
+  const spriteFrames = frame.running ? RUN_FRAMES : WALK_FRAMES
+  const frameDuration = frame.running ? 72 : 118
+  const animationIndex = frame.walking ? Math.floor(frame.time / frameDuration) % spriteFrames.length : 0
+  const spriteSrc = frame.y > 0 ? WALK_FRAMES[0] : spriteFrames[animationIndex]
 
   return <main className="gameRoot">
     <canvas ref={canvasRef} className="pixelCanvas" aria-label="트로이 폐허역 도트 게임 화면" />
 
     <div
       aria-hidden="true"
-      className={`artPlayer facing-${frame.facing} ${frame.walking ? 'walking' : 'idle'} ${frame.y > 0 ? 'jumping' : ''}`}
+      className={`artPlayer spritePlayer facing-${frame.facing} ${frame.walking ? 'walking' : 'idle'} ${frame.running ? 'running' : ''} ${frame.y > 0 ? 'jumping' : ''}`}
       style={{ left: artPlayerLeft, transform: artPlayerTransform }}
     >
-      <div className="artRig">
-        <img className="rigPart rigCape" src="/assets/outis_parts/cape.png" alt="" />
-        <img className="rigPart rigCoatBack" src="/assets/outis_parts/coat_back.png" alt="" />
-        <img className="rigPart rigLegBack" src="/assets/outis_parts/leg_back.png" alt="" />
-        <img className="rigPart rigArmBack" src="/assets/outis_parts/arm_back.png" alt="" />
-        <img className="rigPart rigTorso" src="/assets/outis_parts/torso.png" alt="" />
-        <img className="rigPart rigCoatFront" src="/assets/outis_parts/coat_front.png" alt="" />
-        <img className="rigPart rigLegFront" src="/assets/outis_parts/leg_front.png" alt="" />
-        <img className="rigPart rigArmFront" src="/assets/outis_parts/arm_front.png" alt="" />
-        <img className="rigPart rigHead" src="/assets/outis_parts/head.png" alt="" />
-      </div>
+      <img className="artSprite" src={spriteSrc} alt="" draggable={false} />
     </div>
 
     <header className="topHud">
@@ -342,7 +368,7 @@ function App() {
     </header>
 
     <div className="hintBar">
-      {near ? `E / 터치: ${near.title}` : 'A/D 이동 · Space 점프 · E 상호작용 · I 신분철'}
+      {near ? `E / 터치: ${near.title}` : 'A/D 이동 · Shift 달리기 · Space 점프 · E 상호작용 · I 신분철'}
     </div>
 
     <button className="paperButton ticketButton" onClick={() => setMode('ticket')}>귀향표</button>
@@ -354,6 +380,7 @@ function App() {
         <button onPointerDown={() => moveTouch('right', true)} onPointerUp={() => moveTouch('right', false)} onPointerCancel={() => moveTouch('right', false)}>▶</button>
       </div>
       <div className="touchCluster">
+        <button onPointerDown={() => setTouchRun(true)} onPointerUp={() => setTouchRun(false)} onPointerCancel={() => setTouchRun(false)}>달리기</button>
         <button onClick={jump}>점프</button>
         <button onClick={() => interact()}>상호작용</button>
       </div>
