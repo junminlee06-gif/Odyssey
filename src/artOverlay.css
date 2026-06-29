@@ -43,8 +43,7 @@
 .artPlayer.running,
 .artPlayer.walking,
 .artPlayer.idle,
-.artPlayer.jumping,
-.artSprite {
+.artPlayer.jumping {
   filter: none !important;
   box-shadow: none !important;
   outline: 0 !important;
@@ -78,10 +77,15 @@
   object-position: center bottom;
   user-select: none;
   -webkit-user-drag: none;
+  box-shadow: none !important;
+  outline: 0 !important;
+  text-shadow: none !important;
+  background: transparent !important;
+  filter: url(#outis-alpha-defringe) !important;
 }
 
 .topHud::after {
-  content: 'walk-clean v21';
+  content: 'defringe v22';
   margin-left: auto;
   color: rgba(235, 215, 160, 0.62);
   font-size: 11px;
@@ -101,7 +105,7 @@
   }
 
   .topHud::after {
-    content: 'v21';
+    content: 'v22';
     font-size: 10px;
   }
 }
