@@ -36,8 +36,8 @@
 .pixelCanvas {
   z-index: 2;
   background: transparent;
-  opacity: 0.1;
-  mix-blend-mode: screen;
+  opacity: 0;
+  mix-blend-mode: normal;
 }
 
 .artPlayer {
@@ -50,11 +50,10 @@
   transform-origin: 50% 100%;
   will-change: left, transform;
   filter:
-    drop-shadow(0 0 2px rgba(239, 213, 148, 0.42))
-    drop-shadow(0 8px 9px rgba(0, 0, 0, 0.92))
+    drop-shadow(0 8px 9px rgba(0, 0, 0, 0.88))
     saturate(1.03)
-    brightness(1.04)
-    contrast(1.06);
+    brightness(1.03)
+    contrast(1.05);
 }
 
 .artPlayer::after {
@@ -65,7 +64,7 @@
   bottom: 7.5%;
   height: 7px;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.18) 58%, transparent 76%);
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.16) 58%, transparent 76%);
   transform: scaleX(0.9);
 }
 
@@ -83,11 +82,10 @@
 
 .artPlayer.running {
   filter:
-    drop-shadow(0 0 2px rgba(239, 213, 148, 0.45))
-    drop-shadow(0 10px 10px rgba(0, 0, 0, 0.94))
-    saturate(1.05)
-    brightness(1.05)
-    contrast(1.08);
+    drop-shadow(0 10px 10px rgba(0, 0, 0, 0.9))
+    saturate(1.04)
+    brightness(1.03)
+    contrast(1.06);
 }
 
 .artPlayer.jumping::after {
