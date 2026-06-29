@@ -1,34 +1,24 @@
-const CLEAN_WALK_FRAMES = [
-  '/assets/outis_walk/walk_right_01_contact.png',
-  '/assets/outis_walk/walk_right_02_down.png',
-  '/assets/outis_walk/walk_right_03_passing.png',
-  '/assets/outis_walk/walk_right_04_contact_opposite.png',
-  '/assets/outis_walk/walk_right_05_down_opposite.png',
-  '/assets/outis_walk/walk_right_06_passing_opposite.png'
-]
+function installSpriteDefringeFilter() {
+  if (document.getElementById('outis-alpha-defringe')) return
 
-function guardCleanWalkSprites() {
-  const tick = () => {
-    const player = document.querySelector<HTMLElement>('.artPlayer')
-    const sprite = document.querySelector<HTMLImageElement>('.artSprite')
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+  svg.setAttribute('width', '0')
+  svg.setAttribute('height', '0')
+  svg.setAttribute('aria-hidden', 'true')
+  svg.style.position = 'absolute'
+  svg.style.overflow = 'hidden'
 
-    if (player && sprite) {
-      sprite.style.filter = 'none'
-      sprite.style.boxShadow = 'none'
-      sprite.style.outline = '0'
-      sprite.style.background = 'transparent'
+  const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter')
+  filter.setAttribute('id', 'outis-alpha-defringe')
+  filter.setAttribute('color-interpolation-filters', 'sRGB')
 
-      if (player.classList.contains('running')) {
-        const frameIndex = Math.floor(performance.now() / 78) % CLEAN_WALK_FRAMES.length
-        const cleanSrc = CLEAN_WALK_FRAMES[frameIndex]
-        if (!sprite.src.endsWith(cleanSrc)) sprite.src = cleanSrc
-      }
-    }
+  const matrix = document.createElementNS('http://www.w3.org/2000/svg', 'feColorMatrix')
+  matrix.setAttribute('type', 'matrix')
+  matrix.setAttribute('values', '1 0 0 1 -1  0 1 0 1 -1  0 0 1 1 -1  0 0 0 1 0')
 
-    requestAnimationFrame(tick)
-  }
-
-  requestAnimationFrame(tick)
+  filter.appendChild(matrix)
+  svg.appendChild(filter)
+  document.body.prepend(svg)
 }
 
-guardCleanWalkSprites()
+installSpriteDefringeFilter()
