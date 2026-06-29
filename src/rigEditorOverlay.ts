@@ -74,7 +74,7 @@ function applyConfig(config: RigConfig) {
   for (const key of PART_ORDER) applyPart(key, config[key])
 }
 
-function setSelectedMarker(selected: RigPartKey) {
+function setSelectedMarker(selected: RigPartKey | null) {
   for (const key of PART_ORDER) {
     document.querySelector(`.${key}`)?.classList.toggle('selectedRigPart', key === selected)
   }
@@ -109,25 +109,29 @@ function slider(label: string, value: number, min: number, max: number, step: nu
 }
 
 function bootRigEditor() {
-  const params = new URLSearchParams(window.location.search)
-  if (!params.has('rig')) return
-
   let config = readConfig()
   let selected: RigPartKey = 'rigHead'
+  let panel: HTMLElement | null = null
+  let isOpen = new URLSearchParams(window.location.search).has('rig')
 
-  const panel = document.createElement('aside')
-  panel.className = 'rigEditor'
-  document.body.appendChild(panel)
+  const toggleButton = document.createElement('button')
+  toggleButton.className = 'rigToggleButton'
+  toggleButton.type = 'button'
+  toggleButton.textContent = '리깅'
+  document.body.appendChild(toggleButton)
 
   const renderPanel = () => {
+    if (!panel) return
     panel.replaceChildren()
 
     const header = document.createElement('header')
     const title = document.createElement('b')
     title.textContent = 'OUTIS Rig Editor'
-    const hint = document.createElement('span')
-    hint.textContent = '?rig=1'
-    header.append(title, hint)
+    const close = document.createElement('button')
+    close.type = 'button'
+    close.textContent = '닫기'
+    close.addEventListener('click', () => closePanel())
+    header.append(title, close)
 
     const tabs = document.createElement('div')
     tabs.className = 'rigPartTabs'
@@ -201,15 +205,39 @@ function bootRigEditor() {
     panel.append(header, tabs, controls, actions, json)
   }
 
-  const start = () => {
+  const openPanel = () => {
+    if (isOpen) return
+    isOpen = true
+    panel = document.createElement('aside')
+    panel.className = 'rigEditor'
+    document.body.appendChild(panel)
     applyConfig(config)
     setSelectedMarker(selected)
     renderPanel()
   }
 
+  const closePanel = () => {
+    isOpen = false
+    panel?.remove()
+    panel = null
+    setSelectedMarker(null)
+  }
+
+  toggleButton.addEventListener('click', () => {
+    if (isOpen) closePanel()
+    else openPanel()
+  })
+
   const waitForRig = () => {
-    if (document.querySelector('.rigHead')) start()
-    else window.requestAnimationFrame(waitForRig)
+    if (document.querySelector('.rigHead')) {
+      applyConfig(config)
+      if (isOpen) {
+        isOpen = false
+        openPanel()
+      }
+    } else {
+      window.requestAnimationFrame(waitForRig)
+    }
   }
   waitForRig()
 }
