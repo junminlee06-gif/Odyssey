@@ -7,14 +7,18 @@
   z-index: 1;
   pointer-events: none;
   background-image:
-    linear-gradient(90deg, rgba(5, 6, 7, 0.16), rgba(5, 6, 7, 0.0) 45%, rgba(5, 6, 7, 0.18)),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.08)),
+    linear-gradient(90deg, rgba(5, 6, 7, 0.18), rgba(5, 6, 7, 0.0) 45%, rgba(5, 6, 7, 0.2)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.12)),
     url('/assets/troy_station/background_far.webp'),
     url('/assets/troy_station_backplate.webp');
   background-repeat: no-repeat, no-repeat, repeat-x, no-repeat;
   background-size: cover, cover, auto 100%, cover;
-  background-position: center center, center center, 50% center, center center;
-  filter: saturate(1.16) contrast(1.06) brightness(1.5);
+  background-position:
+    center center,
+    center center,
+    calc(50% + var(--scene-far-x, 0px)) center,
+    center center;
+  filter: saturate(1.12) contrast(1.06) brightness(1.36);
 }
 
 .gameRoot::after {
@@ -25,74 +29,16 @@
   pointer-events: none;
   background-image:
     url('/assets/troy_station/floor_platform.webp'),
-    url('/assets/troy_station/floor_platform.webp'),
     url('/assets/troy_station/train_idle.webp');
-  background-repeat: repeat-x, repeat-x, repeat-x;
-  background-size: min(72vw, 1080px) auto, min(72vw, 1080px) auto, min(66vw, 1000px) auto;
+  background-repeat: repeat-x, no-repeat;
+  background-size: min(156vw, 2360px) auto, min(96vw, 1480px) auto;
   background-position:
-    50% calc(100% + 338px),
-    calc(50% + min(72vw, 1080px)) calc(100% + 338px),
-    50% calc(100% + 20px);
+    calc(50% + var(--scene-floor-x, 0px)) calc(100% + 515px),
+    calc(50% + var(--scene-train-x, 0px)) calc(100% + 330px);
   mix-blend-mode: screen;
-  opacity: 1;
-  filter: saturate(1.22) brightness(1.62) contrast(1.04);
+  opacity: 0.92;
+  filter: saturate(1.12) brightness(1.24) contrast(1.02);
   box-shadow: none;
-}
-
-.gameRoot:has(.artPlayer.walking)::before {
-  animation: farDriftRight 18s linear infinite;
-}
-
-.gameRoot:has(.artPlayer.walking)::after {
-  animation: floorDriftRight 1.25s linear infinite;
-}
-
-.gameRoot:has(.artPlayer.facing-left.walking)::before {
-  animation-name: farDriftLeft;
-}
-
-.gameRoot:has(.artPlayer.facing-left.walking)::after {
-  animation-name: floorDriftLeft;
-}
-
-@keyframes farDriftRight {
-  from { background-position: center center, center center, 50% center, center center; }
-  to { background-position: center center, center center, calc(50% - 180px) center, center center; }
-}
-
-@keyframes farDriftLeft {
-  from { background-position: center center, center center, 50% center, center center; }
-  to { background-position: center center, center center, calc(50% + 180px) center, center center; }
-}
-
-@keyframes floorDriftRight {
-  from {
-    background-position:
-      50% calc(100% + 338px),
-      calc(50% + min(72vw, 1080px)) calc(100% + 338px),
-      50% calc(100% + 20px);
-  }
-  to {
-    background-position:
-      calc(50% - min(72vw, 1080px)) calc(100% + 338px),
-      50% calc(100% + 338px),
-      calc(50% - 130px) calc(100% + 20px);
-  }
-}
-
-@keyframes floorDriftLeft {
-  from {
-    background-position:
-      50% calc(100% + 338px),
-      calc(50% + min(72vw, 1080px)) calc(100% + 338px),
-      50% calc(100% + 20px);
-  }
-  to {
-    background-position:
-      calc(50% + min(72vw, 1080px)) calc(100% + 338px),
-      calc(50% + 2 * min(72vw, 1080px)) calc(100% + 338px),
-      calc(50% + 130px) calc(100% + 20px);
-  }
 }
 
 .pixelCanvas {
@@ -143,7 +89,7 @@
 }
 
 .topHud::after {
-  content: 'parallax v26';
+  content: 'motion v27';
   margin-left: auto;
   color: rgba(235, 215, 160, 0.62);
   font-size: 11px;
@@ -154,50 +100,16 @@
 @media (max-width: 900px) {
   .gameRoot::before {
     background-size: cover, cover, auto 100%, cover;
-    filter: saturate(1.18) contrast(1.06) brightness(1.58);
+    filter: saturate(1.12) contrast(1.06) brightness(1.42);
   }
 
   .gameRoot::after {
-    background-size: 86vw auto, 86vw auto, 76vw auto;
+    background-size: 180vw auto, 116vw auto;
     background-position:
-      50% calc(100% + 390px),
-      calc(50% + 86vw) calc(100% + 390px),
-      50% calc(100% + 78px);
-    filter: saturate(1.24) brightness(1.78) contrast(1.04);
-  }
-
-  .gameRoot:has(.artPlayer.walking)::after {
-    animation-duration: 1.15s;
-  }
-
-  @keyframes floorDriftRight {
-    from {
-      background-position:
-        50% calc(100% + 390px),
-        calc(50% + 86vw) calc(100% + 390px),
-        50% calc(100% + 78px);
-    }
-    to {
-      background-position:
-        calc(50% - 86vw) calc(100% + 390px),
-        50% calc(100% + 390px),
-        calc(50% - 130px) calc(100% + 78px);
-    }
-  }
-
-  @keyframes floorDriftLeft {
-    from {
-      background-position:
-        50% calc(100% + 390px),
-        calc(50% + 86vw) calc(100% + 390px),
-        50% calc(100% + 78px);
-    }
-    to {
-      background-position:
-        calc(50% + 86vw) calc(100% + 390px),
-        calc(50% + 172vw) calc(100% + 390px),
-        calc(50% + 130px) calc(100% + 78px);
-    }
+      calc(50% + var(--scene-floor-x, 0px)) calc(100% + 560px),
+      calc(50% + var(--scene-train-x, 0px)) calc(100% + 390px);
+    opacity: 0.9;
+    filter: saturate(1.14) brightness(1.32) contrast(1.02);
   }
 
   .artPlayer {
@@ -206,7 +118,7 @@
   }
 
   .topHud::after {
-    content: 'v26';
+    content: 'v27';
     font-size: 10px;
   }
 }
